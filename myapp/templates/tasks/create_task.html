@@ -1,0 +1,42 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+
+
+<main class="container">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form action="/task/create/" method="POST" class="card card-body">
+                <h1>Crear Nueva Tarea</h1>
+                {{error}}
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="title">Titulo Tarea:</label>
+                    <input type="text" name="title" id="title" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label for="description">Descripcion Tarea:</label>
+                    <textarea name="description" id="description" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="project">Proyecto:</label>
+                    <select  name="project" id="project" class="form-control form-control">
+                        {%for projrct in projects %}
+                        <option value="{{projrct.id}}">**{{projrct.name}}**</option>
+                        {% endfor %}
+                    </select>
+                </div class="mb-3">
+                <div class="mb-3">
+					<label class="form-check-label" for="important">
+                        ¿Importante?:
+						<input classs="form-check-input" type="checkbox" name="important" id="important">
+					</label>
+				</div>
+                <button>Guardar</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+
+{% endblock %}

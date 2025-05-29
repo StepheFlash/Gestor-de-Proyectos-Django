@@ -1,0 +1,20 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+
+<main class="container">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form method="POST" action="{% url 'create_project' %}">
+                <h1>Crear nuevo proyecto</h1>
+                {% csrf_token %}
+                {{form.as_p}}
+                <button>Guardar</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+
+
+{% endblock %}

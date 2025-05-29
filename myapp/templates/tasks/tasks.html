@@ -1,0 +1,38 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content%}
+
+<div class="container-fluid">
+    <div class="body">
+        <div class="card-header">
+            <h1 class="text-center display-3">Listado de Tareas</h1>
+        </div>
+        
+        {% for task in tasks %}
+        <div class="card-body">
+            <a href="{% url 'task_detail' task.id %}">
+                {% if task.important %}
+                    <h1 class="fw-bold text-success">{{task.title}}</h1>
+                {% else %}
+                    <h1 class="fw-bold">{{task.title}}</h1>
+                {% endif %}
+            </a>
+                <p>Descripcion: {{task.description}}</p>
+                <p>Usuario: {{task.user.username}}</p>
+                <p>Proyecto: {{task.project.name}}</p>
+                <p>Fecha de completado: {{task.datecompleted|date:'M j Y:i'}}</p>
+        </div>
+        <!-- <div class="card-body">
+            <h1>{% if task.done == False %} 🕑 {% else %} ✅ {% endif %} {{task.title}}</h1>
+            <p>Descripcion: {{task.description}}</p>
+            <p>Proyecto: {{task.project.name }}</p>
+            <button> Delete </button>
+            <button> ✅ Done </button>
+        </div> -->
+    
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h1>Destalles de projectos</h1>
+        </div>
+        <div class="card-body">
+            <article class="card">
+                <a href="#">
+                    <h2>{{project}}</h2>
+                </a>
+            </article>
+            {% for taks in tasks %}
+
+            <h3>{{taks.title}}</h3>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock %}

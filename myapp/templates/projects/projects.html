@@ -1,0 +1,25 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-body">
+            <h1>Pagina de projectos</h1>
+            {% for project in projects %}
+            <article class="card">
+                <a href="{% url 'project_detail' project.id %}">
+                    <h1>{{project.name}}</h1>
+                </a>
+                
+            </article>
+            {% endfor %} 
+        </div>
+      
+    </div>
+   
+
+</div>
+
+
+
+{% endblock %}
