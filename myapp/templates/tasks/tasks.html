@@ -2,10 +2,13 @@
 
 {% block content%}
 
+<!-- 
+    Esta sección inicia el contenedor principal de la página de tareas, utilizando la clase "container-fluid" de Bootstrap para garantizar una respuesta completa.
+-->
 <div class="container-fluid">
     <div class="body">
         <div class="card-header">
-            <h1 class="text-center display-3">Listado de Tareas</h1>
+                <h1 class="text-center display-3">{{TaskCompleted}}</h1>
         </div>
         
         {% for task in tasks %}

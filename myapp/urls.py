@@ -1,4 +1,21 @@
 from django.urls import path
+"""
+Configuración de URL para la aplicación Django.
+Define los patrones de URL y sus funciones de vista correspondientes:
+- '' : Página de inicio, gestionada por `views.home`, llamada 'home'.
+- 'inicio/' : Página de índice, gestionada por `views.index`, llamada 'index'.
+- 'about/' : Página "Acerca de", gestionada por `views.about`, llamada 'about'.
+- 'registro/' : Registro de usuario, gestionado por `views.registro`, llamado 'registro'.
+- 'logout/' : Cierre de sesión de usuario, gestionado por `views.cerrar_sesion`, llamado 'logout'.
+- 'login/' : Inicio de sesión de usuario, gestionado por `views.inicio_sesion`, llamado 'login'.
+- 'projects/' : Lista de proyectos, gestionada por `views.projects`, llamado 'projects'. - 'projects/create/': Crea un nuevo proyecto, gestionado por `views.create_project`, llamado 'create_project'.
+- 'projects/<int:id>': Vista detallada del proyecto, gestionada por `views.project_detail`, llamada 'project_detail'.
+- 'tasks/': Lista de tareas, gestionada por `views.tasks`, llamada 'tasks'.
+- 'tasks_completed/': Lista de tareas completadas, gestionada por `views.tasks_completed`, llamada 'tasks_completed'.
+- 'task/create/': Crea una nueva tarea, gestionada por `views.create_task`, llamada 'create_task'. - 'task/<int:task_id>/detail': Vista de detalle de la tarea, gestionada por `views.task_detail`, llamada 'task_detail'.
+- 'task/<int:task_id>/complete': Marcar la tarea como completada, gestionada por `views.complete_task`, llamada 'complete_task'.
+- 'task/<int:task_id>/delete': Eliminar una tarea, gestionada por `views.delete_task`, llamada 'delete_task'.
+"""
 from . import views
 
 urlpatterns = [

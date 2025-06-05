@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html lang="es" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>myapp.views &#8212; documentación de myapp - 1</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../_static/documentation_options.js?v=92345faf"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/translations.js?v=f85f4cfb"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Código fuente para myapp.views</h1><div class="highlight"><pre>
+<span></span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Vistas de Django para autenticación de usuarios, gestión de proyectos y tareas.</span>
+<span class="sd">Functions:</span>
+<span class="sd">    home(request):</span>
+<span class="sd">        Renderizar la página de inicio.</span>
+<span class="sd">    registro(request):</span>
+<span class="sd">        Gestionar el registro de usuarios. En GET, mostrar el formulario de registro. En POST, crear un usuario si las contraseñas coinciden.</span>
+<span class="sd">    inicio_sesion(request):</span>
+<span class="sd">        Gestionar el inicio de sesión del usuario. En GET, mostrar el formulario de inicio de sesión. En POST, autenticar e iniciar sesión del usuario.</span>
+<span class="sd">   cerrar_sesion(request):</span>
+<span class="sd">        Cerrar la sesión del usuario actual y redirigir a la página de inicio de sesión.</span>
+<span class="sd">    index(request):</span>
+<span class="sd">        Mostrar la página de índice principal para los usuarios conectados, mostrando la información del usuario.</span>
+<span class="sd">    projects(request):</span>
+<span class="sd">        Mostrar una lista de todos los proyectos.</span>
+<span class="sd">    about(request):</span>
+<span class="sd">        Mostrar la página &quot;Acerca de&quot;.</span>
+<span class="sd">    tasks(request):</span>
+<span class="sd">        Mostrar una lista de tareas incompletas para el usuario conectado.</span>
+<span class="sd">    tasks_completed(request):</span>
+<span class="sd">        Mostrar una lista de tareas completadas para el usuario conectado.</span>
+<span class="sd">    create_task(request):</span>
+<span class="sd">        Gestionar la creación de una nueva tarea. En GET, mostrar el formulario de creación de tareas. En POST, crear la tarea.</span>
+<span class="sd">    task_detail(request, task_id):</span>
+<span class="sd">        Mostrar y actualizar los detalles de una tarea específica perteneciente al usuario conectado.</span>
+<span class="sd">    complete_task(request, task_id):</span>
+<span class="sd">        Marcar una tarea específica como completada para el usuario conectado. </span>
+<span class="sd">    delete_task(request, task_id):</span>
+<span class="sd">        Elimina una tarea específica del usuario conectado.</span>
+<span class="sd">    create_project(request):</span>
+<span class="sd">        Gestiona la creación de un nuevo proyecto. En GET, muestra el formulario de creación del proyecto. En POST, crea el proyecto.</span>
+<span class="sd">    project_detail(request, id):</span>
+<span class="sd">        Muestra los detalles y las tareas asociadas a un proyecto específico.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.http</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.shortcuts</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_object_or_404</span><span class="p">,</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">UserCreationForm</span><span class="p">,</span> <span class="n">AuthenticationForm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth</span><span class="w"> </span><span class="kn">import</span> <span class="n">login</span><span class="p">,</span> <span class="n">logout</span><span class="p">,</span> <span class="n">authenticate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.db</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntegrityError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.contrib.auth.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">login_required</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.forms</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskForm</span><span class="p">,</span> <span class="n">CreateNewProject</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Project</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">django.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="c1"># Create your views here.</span>
+
+<div class="viewcode-block" id="home">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.home">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">home</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;home.html&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="registro">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.registro">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">registro</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+   
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;registro.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">UserCreationForm</span>
+        <span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;password1&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;password2&#39;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create_user</span><span class="p">(</span>
+                    <span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span> <span class="n">password</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;password1&#39;</span><span class="p">],</span> <span class="n">email</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span> <span class="n">first_name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;firstname&#39;</span><span class="p">],</span>
+                    <span class="n">last_name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;lastname&#39;</span><span class="p">])</span>
+                <span class="n">user</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                <span class="c1"># Funcion para almacenar la sesion del usuario</span>
+                <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">IntegrityError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;registro.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+                    <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">UserCreationForm</span><span class="p">,</span>
+                    <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Error al crear el usuario: ya existe&#39;</span>
+                <span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;registro.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">UserCreationForm</span><span class="p">,</span>
+                <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Las contraseñas no coinciden&#39;</span>
+            <span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="inicio_sesion">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.inicio_sesion">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">inicio_sesion</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;login.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">AuthenticationForm</span>
+        <span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">authenticate</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span> <span class="n">password</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;login.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">AuthenticationForm</span><span class="p">,</span>
+                <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Usuario y/o contraseña incorrectos&#39;</span>
+            <span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">login</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cerrar_sesion">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.cerrar_sesion">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cerrar_sesion</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">logout</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;login&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="index">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.index">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">index</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39; !Hola, Bienvenido a la App de Django!&#39;</span>
+    <span class="n">usuario</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span>
+    <span class="n">nombre_completo</span> <span class="o">=</span> <span class="n">usuario</span><span class="o">.</span><span class="n">first_name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">usuario</span><span class="o">.</span><span class="n">last_name</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">usuario</span><span class="o">.</span><span class="n">email</span>
+    <span class="n">data_user</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;nombre_completo&#39;</span> <span class="p">:</span> <span class="n">nombre_completo</span><span class="p">,</span>
+        <span class="s1">&#39;email&#39;</span> <span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;index.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span> <span class="s1">&#39;data_user&#39;</span> <span class="p">:</span> <span class="n">data_user</span><span class="p">})</span></div>
+
+
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">projects</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Proyectos&#39;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;projects/projectos.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span> <span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+
+
+<div class="viewcode-block" id="about">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.about">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">about</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;about.html&#39;</span><span class="p">)</span></div>
+
+
+<span class="c1"># Funtion ...</span>
+
+<div class="viewcode-block" id="projects">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.projects">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">projects</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># projects = list(Proyect.objects.values())</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="c1"># return JsonResponse(projects, safe=False)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;projects/projects.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;projects&#39;</span><span class="p">:</span> <span class="n">projects</span><span class="p">})</span></div>
+
+<span class="c1"># # Funtion ...</span>
+
+<div class="viewcode-block" id="tasks">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.tasks">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tasks</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># task = get_object_or_404(Task, id=id)</span>
+    <span class="c1"># return HttpResponse(&#39;Tarea: %s&#39; % task.title)</span>
+    <span class="n">TaskCompleted</span> <span class="o">=</span> <span class="s2">&quot;Tareas Pendientes&quot;</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">datecompleted__isnull</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;tasks/tasks.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;tasks&#39;</span><span class="p">:</span> <span class="n">tasks</span><span class="p">,</span> <span class="s1">&#39;TaskCompleted&#39;</span><span class="p">:</span> <span class="n">TaskCompleted</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="tasks_completed">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.tasks_completed">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">tasks_completed</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">TaskCompleted</span> <span class="o">=</span> <span class="s2">&quot;Tareas Completadas&quot;</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">datecompleted__isnull</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-datecompleted&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;tasks/tasks.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;tasks&#39;</span><span class="p">:</span> <span class="n">tasks</span><span class="p">,</span> <span class="s1">&#39;TaskCompleted&#39;</span><span class="p">:</span> <span class="n">TaskCompleted</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="create_task">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.create_task">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_task</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="n">projects</span> <span class="o">=</span> <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;tasks/create_task.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;projects&#39;</span><span class="p">:</span> <span class="n">projects</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">project_instance</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Project</span><span class="p">,</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;project&#39;</span><span class="p">])</span>
+            <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+                    <span class="n">title</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">],</span> <span class="n">description</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">],</span><span class="n">project</span><span class="o">=</span><span class="n">project_instance</span><span class="p">,</span> 
+                    <span class="n">important</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;important&#39;</span><span class="p">)),</span>
+                    <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span>
+            <span class="p">)</span>
+            <span class="c1">#form = TaskForm(request.POST)</span>
+            <span class="c1"># new_task = form.save(commit=False)</span>
+            <span class="c1"># new_task.user = request.user</span>
+            <span class="c1"># new_task.save()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;tasks/create_task.html&#39;</span><span class="p">,{</span>
+                <span class="s1">&#39;form&#39;</span> <span class="p">:</span> <span class="n">TaskForm</span><span class="p">(),</span>
+                <span class="s1">&#39;projects&#39;</span> <span class="p">:</span> <span class="n">projects</span><span class="p">,</span>
+                <span class="s1">&#39;error&#39;</span> <span class="p">:</span> <span class="s1">&#39;Por favor intrduzca datoas validos&#39;</span>
+            <span class="p">})</span></div>
+
+        
+<div class="viewcode-block" id="task_detail">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.task_detail">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">task_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">task_id</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+        <span class="n">form</span> <span class="o">=</span> <span class="n">TaskForm</span><span class="p">(</span><span class="n">instance</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;tasks/task_detail.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;task&#39;</span><span class="p">:</span> <span class="n">task</span><span class="p">,</span> <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+            <span class="n">form</span> <span class="o">=</span> <span class="n">TaskForm</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">,</span> <span class="n">instance</span><span class="o">=</span><span class="n">task</span><span class="p">)</span>
+            <span class="n">form</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;tasks/task_detail.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+                <span class="s1">&#39;task&#39;</span><span class="p">:</span> <span class="n">task</span><span class="p">,</span>
+                <span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">form</span><span class="p">,</span>
+                <span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;Error al actualizar tarea&#39;</span><span class="p">})</span></div>
+
+        
+<div class="viewcode-block" id="complete_task">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.complete_task">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">complete_task</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">task_id</span><span class="p">):</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">datecompleted</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_task">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.delete_task">[documentos]</a>
+<span class="nd">@login_required</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_task</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">task_id</span><span class="p">):</span>
+    <span class="n">task</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="n">task_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">)</span>      </div>
+
+
+<div class="viewcode-block" id="create_project">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.create_project">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_project</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;projects/create_project.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;form&#39;</span><span class="p">:</span> <span class="n">CreateNewProject</span><span class="p">()})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Project</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;projects&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="project_detail">
+<a class="viewcode-back" href="../../myapp.html#myapp.views.project_detail">[documentos]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">project_detail</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+    <span class="n">projectos</span> <span class="o">=</span> <span class="n">get_object_or_404</span><span class="p">(</span><span class="n">Project</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+    <span class="n">tasks</span> <span class="o">=</span> <span class="n">Task</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;projects/detail.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s1">&#39;project&#39;</span><span class="p">:</span> <span class="n">projectos</span><span class="p">,</span>
+        <span class="s1">&#39;tasks&#39;</span> <span class="p">:</span> <span class="n">tasks</span>
+    <span class="p">})</span></div>
+
+
+<span class="c1"># def create_task(request):</span>
+<span class="c1">#     if (request.method == &#39;GET&#39;):</span>
+<span class="c1">#         return render(request, &#39;tasks/create_task.html&#39;, {&#39;form&#39;: CreateNewTask()})</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         Task.objects.create(</span>
+<span class="c1">#             title=request.POST[&#39;title&#39;], description=request.POST[&#39;description&#39;], project_id=2)</span>
+<span class="c1">#         return redirect(&#39;tasks&#39;)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">myapp</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navegación</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../myapp.html">myapp</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Código de módulo</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Deivid Palacios.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

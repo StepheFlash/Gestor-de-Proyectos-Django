@@ -47,11 +47,13 @@ from django.utils import timezone
 
 # Create your views here.
 
+
 def home(request):
     return render(request, 'home.html')
 
+
 def registro(request):
-   
+
     if request.method == 'GET':
         return render(request, 'registro.html', {
             'form': UserCreationForm
@@ -60,7 +62,8 @@ def registro(request):
         if request.POST['password1'] == request.POST['password2']:
             try:
                 user = User.objects.create_user(
-                    username=request.POST['username'], password=request.POST['password1'], email=request.POST['email'], first_name=request.POST['firstname'],
+                    username=request.POST['username'], password=request.POST[
+                        'password1'], email=request.POST['email'], first_name=request.POST['firstname'],
                     last_name=request.POST['lastname'])
                 user.save()
                 # Funcion para almacenar la sesion del usuario
@@ -76,6 +79,7 @@ def registro(request):
                 'form': UserCreationForm,
                 'error': 'Las contraseñas no coinciden'
             })
+
 
 def inicio_sesion(request):
     if request.method == 'GET':
@@ -95,10 +99,12 @@ def inicio_sesion(request):
             login(request, user)
             return redirect('index')
 
+
 @login_required
 def cerrar_sesion(request):
     logout(request)
     return redirect('login')
+
 
 @login_required
 def index(request):
@@ -107,21 +113,23 @@ def index(request):
     nombre_completo = usuario.first_name + ' ' + usuario.last_name
     email = usuario.email
     data_user = {
-        'nombre_completo' : nombre_completo,
-        'email' : email,
+        'nombre_completo': nombre_completo,
+        'email': email,
     }
-    return render(request, 'index.html', {'title': title, 'data_user' : data_user})
+    return render(request, 'index.html', {'title': title, 'data_user': data_user})
+
 
 @login_required
 def projects(request):
     title = 'Proyectos'
-    return render(request, 'projects/projectos.html', {'title' : title})
+    return render(request, 'projects/projectos.html', {'title': title})
 
 
 def about(request):
     return render(request, 'about.html')
 
 # Funtion ...
+
 
 def projects(request):
     # projects = list(Proyect.objects.values())
@@ -130,17 +138,23 @@ def projects(request):
     return render(request, 'projects/projects.html', {'projects': projects})
 # # Funtion ...
 
+
 @login_required
 def tasks(request):
     # task = get_object_or_404(Task, id=id)
     # return HttpResponse('Tarea: %s' % task.title)
+    TaskCompleted = "Tareas Pendientes"
     tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
-    return render(request, 'tasks/tasks.html', {'tasks': tasks})
+    return render(request, 'tasks/tasks.html', {'tasks': tasks, 'TaskCompleted': TaskCompleted})
+
 
 @login_required
 def tasks_completed(request):
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by('-datecompleted')
-    return render(request, 'tasks/tasks.html', {'tasks': tasks})
+    TaskCompleted = "Tareas Completadas"
+    tasks = Task.objects.filter(
+        user=request.user, datecompleted__isnull=False).order_by('-datecompleted')
+    return render(request, 'tasks/tasks.html', {'tasks': tasks, 'TaskCompleted': TaskCompleted})
+
 
 @login_required
 def create_task(request):
@@ -149,24 +163,26 @@ def create_task(request):
         return render(request, 'tasks/create_task.html', {'projects': projects})
     else:
         try:
-            project_instance = get_object_or_404(Project,id=request.POST['project'])
+            project_instance = get_object_or_404(
+                Project, id=request.POST['project'])
             Task.objects.create(
-                    title=request.POST['title'], description=request.POST['description'],project=project_instance, 
-                    important=bool(request.POST.get('important')),
-                    user=request.user
+                title=request.POST['title'], description=request.POST['description'], project=project_instance,
+                important=bool(request.POST.get('important')),
+                user=request.user
             )
-            #form = TaskForm(request.POST)
+            # form = TaskForm(request.POST)
             # new_task = form.save(commit=False)
             # new_task.user = request.user
             # new_task.save()
             return redirect('tasks')
         except ValueError:
-            return render(request,'tasks/create_task.html',{
-                'form' : TaskForm(),
-                'projects' : projects,
-                'error' : 'Por favor intrduzca datoas validos'
+            return render(request, 'tasks/create_task.html', {
+                'form': TaskForm(),
+                'projects': projects,
+                'error': 'Por favor intrduzca datoas validos'
             })
-        
+
+
 @login_required
 def task_detail(request, task_id):
     if request.method == 'GET':
@@ -184,7 +200,8 @@ def task_detail(request, task_id):
                 'task': task,
                 'form': form,
                 'error': 'Error al actualizar tarea'})
-        
+
+
 @login_required
 def complete_task(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
@@ -193,12 +210,14 @@ def complete_task(request, task_id):
         task.save()
         return redirect('tasks')
 
+
 @login_required
 def delete_task(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
     if request.method == 'POST':
         task.delete()
-        return redirect('tasks')      
+        return redirect('tasks')
+
 
 def create_project(request):
     if (request.method == 'GET'):
@@ -206,13 +225,14 @@ def create_project(request):
     else:
         Project.objects.create(name=request.POST["name"])
         return redirect('projects')
-    
+
+
 def project_detail(request, id):
     projectos = get_object_or_404(Project, id=id)
     tasks = Task.objects.filter(project_id=id)
     return render(request, 'projects/detail.html', {
         'project': projectos,
-        'tasks' : tasks
+        'tasks': tasks
     })
 
 # def create_task(request):
