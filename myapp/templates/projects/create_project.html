@@ -1,23 +1,60 @@
-{% extends 'layouts/principalMenu.html' %}
 
 {% block content %}
-
 <!--
-Esta sección inicia es el formulario para la creacion de proyectos, utilizando la clase "container" de Bootstrap para garantizar una respuesta completa.
+Esta sección inicia es el formulario para la creacion de tareas, utilizando la clase "container" de Bootstrap para garantizar una respuesta completa.
 -->
 
-<main class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4">
-            <form method="POST" action="{% url 'create_project' %}">
-                <h1>Crear nuevo proyecto</h1>
-                {% csrf_token %}
-                {{form.as_p}}
-                <button>Guardar</button>
-            </form>
+<!-- Modal Create Projects -->
+<div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Nuevo</span>
+                    <span class="fw-light">
+                        Proyecto
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="small">Formulario para agregar nuevos proyectos</p>   
+                <form method="POST" action="{% url 'create_project' %}">
+                {{error}}
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Titulo</label>
+                                <input id="name" name="name" type="text" class="form-control" placeholder="Titulo del projecto">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Horario</label>
+                                <input id="horario_reunion" name="horario_reunion" type="text" class="form-control" placeholder="Horario de la reuniones">
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group form-group-default">
+                                <label>Tema</label>
+                                <input id="tema_investigacion" name="tema_investigacion" type="text" class="form-control" placeholder="Tema de investigación">
+                            </div>
+                        </div>
+                    </div>
+                   <button type="submit" id="addRowButton" class="btn btn-success">Agregar</button>
+                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
         </div>
     </div>
-</main>
+</div>
+
 
 
 

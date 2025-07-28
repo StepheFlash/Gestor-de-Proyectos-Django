@@ -19,3 +19,5 @@ class TaskForm(forms.ModelForm):
     
 class CreateNewProject(forms.Form):
     name = forms.CharField(label="Nombre del proyecto", max_length=200)
+    horario_reunion = forms.CharField(label="Horario de reunion", max_length=400)
+    tema_investigacion = forms.CharField(label="Tema de investigacion", max_length=400)

@@ -25,7 +25,7 @@ Functions:
     task_detail(request, task_id):
         Mostrar y actualizar los detalles de una tarea específica perteneciente al usuario conectado.
     complete_task(request, task_id):
-        Marcar una tarea específica como completada para el usuario conectado. 
+        Marcar una tarea específica como completada para el usuario conectado.
     delete_task(request, task_id):
         Elimina una tarea específica del usuario conectado.
     create_project(request):
@@ -33,7 +33,7 @@ Functions:
     project_detail(request, id):
         Muestra los detalles y las tareas asociadas a un proyecto específico.
 """
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
@@ -41,9 +41,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from .forms import TaskForm, CreateNewProject
-from .models import Project
-from .models import Task
+from .models import Project, Task, Integrantes
 from django.utils import timezone
+import json
 
 # Create your views here.
 
@@ -62,10 +62,20 @@ def registro(request):
         if request.POST['password1'] == request.POST['password2']:
             try:
                 user = User.objects.create_user(
-                    username=request.POST['username'], password=request.POST[
-                        'password1'], email=request.POST['email'], first_name=request.POST['firstname'],
-                    last_name=request.POST['lastname'])
+                    username=request.POST['username'],
+                    first_name=request.POST['firstname'],
+                    last_name=request.POST['lastname'],
+                    email=request.POST['email'],
+                    password=request.POST['password1']
+                )
                 user.save()
+                integrante = Integrantes.objects.create(
+                    user=user,
+                    project_id=None,
+                    cedula=request.POST['cedula'],
+                    student_code=request.POST['student_code']
+                )
+                integrante.save()
                 # Funcion para almacenar la sesion del usuario
                 login(request, user)
                 return redirect('login')
@@ -107,8 +117,7 @@ def cerrar_sesion(request):
 
 
 @login_required
-def index(request):
-    title = ' !Hola, Bienvenido a la App de Django!'
+def user_data(request):
     usuario = request.user
     nombre_completo = usuario.first_name + ' ' + usuario.last_name
     email = usuario.email
@@ -116,13 +125,15 @@ def index(request):
         'nombre_completo': nombre_completo,
         'email': email,
     }
-    return render(request, 'index.html', {'title': title, 'data_user': data_user})
+
+    return data_user
 
 
 @login_required
-def projects(request):
-    title = 'Proyectos'
-    return render(request, 'projects/projectos.html', {'title': title})
+def index(request):
+    title = ' !Hola, Bienvenido a la App de Django!'
+    data_user = user_data(request)
+    return render(request, 'index.html', {'title': title, 'data_user': data_user})
 
 
 def about(request):
@@ -131,12 +142,87 @@ def about(request):
 # Funtion ...
 
 
+@login_required
+def projects(request):
+    title = 'Proyectos'
+    data_user = user_data(request)
+    return render(request, 'projects/projectos.html', {'title': title, 'data_user': data_user})
+
+
+@login_required
 def projects(request):
     # projects = list(Proyect.objects.values())
     projects = Project.objects.all()
+    integrantes = Integrantes.objects.select_related('user').all()
     # return JsonResponse(projects, safe=False)
-    return render(request, 'projects/projects.html', {'projects': projects})
-# # Funtion ...
+    data_user = user_data(request)
+    return render(request, 'projects/projects.html', {'projects': projects, 'data_user': data_user, 'integrantes': integrantes})
+
+
+@login_required
+def create_project(request):
+    if request.method == 'GET':
+        return render(request, 'projects/projects.html', {'form': CreateNewProject()})
+    else:
+        try:
+            Project.objects.create(
+                name=request.POST["name"],
+                horario_reunion=request.POST["horario_reunion"],
+                tema_investigacion=request.POST["tema_investigacion"]
+            )
+            return redirect('projects')
+        except ValueError:
+            print("Por favor intrduzca datos validos")
+
+
+@login_required
+def assing_members_project(request):
+    integrantes = Integrantes.objects.select_related('user').all()
+    if request.method == 'GET':
+        return render(request, 'projects/project_members.html', {'integrantes': integrantes})
+    elif request.method == 'POST':
+        integrante_id = request.POST.get('integranteSelect')
+        project_id = request.POST.get('project_id')
+
+        print("project_id",project_id)
+        print("Integrantes_id",integrante_id)
+
+        if not integrante_id or not project_id:
+            return HttpResponseBadRequest("Faltan datos.")
+        
+        integrante = get_object_or_404(Integrantes, pk=integrante_id)
+        integrante.project_id = project_id
+        integrante.save()
+
+        return redirect('projects')
+    else:
+        return HttpResponseBadRequest("Metodo no permitido")
+
+
+@login_required
+def integrante_ajax_detalle(request):
+    integrante_id = request.GET.get('integrante_id')
+    print("integrante_id",integrante_id)
+    integrante = get_object_or_404(Integrantes, id=integrante_id)
+
+    data = {
+        'cedula': integrante.cedula,
+        'student_code': integrante.student_code,
+        'institutional_mail': integrante.user.email
+    }
+    return JsonResponse(data)
+
+
+@login_required
+def project_info(request, id):
+    id = 1
+    project = get_object_or_404(Project, pk=id)
+    return render(request, 'projects/info_proyect', {'project': project})
+
+
+@login_required
+def approach_project(request):
+    return render(request, 'projects/approach/project_approach.html')
 
 
 @login_required
@@ -159,7 +245,7 @@ def tasks_completed(request):
 @login_required
 def create_task(request):
     projects = Project.objects.all()
-    if (request.method == 'GET'):
+    if request.method == 'GET':
         return render(request, 'tasks/create_task.html', {'projects': projects})
     else:
         try:
@@ -182,6 +268,52 @@ def create_task(request):
                 'error': 'Por favor intrduzca datoas validos'
             })
 
+
+@login_required
+def project_edit(request, id):
+    project = get_object_or_404(Project, pk=id)
+    integrantes = Integrantes.objects.filter(project=project)
+    if request.method == 'GET':
+        return render(request, 'projects/project_edit.html', {
+            'project': project,
+            'integrantes': integrantes
+        })
+    else:
+        try:
+            project.name = request.POST.get('name')
+            project.horario_reunion = request.POST.get('horario_reunion')
+            project.tema_investigacion = request.POST.get('tema_investigacion')
+            project.save()
+
+            for integrante in integrantes:
+                integrante.name = request.POST.get(
+                    f'integrante_name_{integrante.id}')
+                integrante.cedula = request.POST.get(f'cedula_{integrante.id}')
+                integrante.student_code = request.POST.get(
+                    f'student_code_{integrante.id}')
+                integrante.institutional_mail = request.POST.get(
+                    f'institutional_mail_{integrante.id}')
+                integrante.save()
+            return redirect('projects')
+
+        except ValueError:
+            return render(request, 'projects/project_edit.html', {
+                'project': project,
+                'integrantes': integrantes,
+                'error': 'Error al actualizar los datos'
+            })
+
+
+@login_required
+def project_detail(request, id):
+    project = get_object_or_404(Project, pk=id)
+    integrantes = integrantes = Integrantes.objects.select_related('user').filter(project=project)
+    return render(request, 'projects/project_detail.html', {
+        'project': project,
+        'integrantes': integrantes
+    })
+
+@login_required
 
 @login_required
 def task_detail(request, task_id):
@@ -218,22 +350,6 @@ def delete_task(request, task_id):
         task.delete()
         return redirect('tasks')
 
-
-def create_project(request):
-    if (request.method == 'GET'):
-        return render(request, 'projects/create_project.html', {'form': CreateNewProject()})
-    else:
-        Project.objects.create(name=request.POST["name"])
-        return redirect('projects')
-
-
-def project_detail(request, id):
-    projectos = get_object_or_404(Project, id=id)
-    tasks = Task.objects.filter(project_id=id)
-    return render(request, 'projects/detail.html', {
-        'project': projectos,
-        'tasks': tasks
-    })
 
 # def create_task(request):
 #     if (request.method == 'GET'):

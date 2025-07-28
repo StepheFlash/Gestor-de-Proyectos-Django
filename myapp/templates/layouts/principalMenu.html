@@ -174,9 +174,9 @@
 								<p>Dashboard</p>
 							</a>
 						</li>
-						<li class="nav-item active">
+						<!-- <li class="nav-item active">
 							<a data-toggle="collapse" href="#proyectos" class="collapsed" aria-expanded="false">
-								<i class="fas fa-desktop"></i>
+								<i class="fas fa-folder-open"></i>
 								<p>Proyectos</p>
 								<span class="caret"></span>
 							</a>
@@ -189,17 +189,29 @@
 										</a>
 									</li>
 									<li>
-										<a href="{% url 'create_project' %}">
+										<a href="#">
 											<i class="fas fa-desktop"></i>
-											<span class="sub-item">Crear Proyectos</span>
+											<span class="sub-item">Proyectos Culminados</span>
 										</a>
 									</li>
 								</ul>
 							</div>
+						</li> -->
+						<li class="nav-item">
+							<a href="{% url 'projects' %}">
+								<i class="fas fa-folder-open"></i>
+								<p>Proyecto</p>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="{% url 'approach_project' %}">
+								<i class="fas fa-file-powerpoint"></i>
+								<p>Planteamiento del proyecto</p>
+							</a>
 						</li>
 						<li class="nav-item active">
 							<a data-toggle="collapse" href="#tareas" class="collapsed" aria-expanded="false">
-								<i class="fas fa-file"></i>
+								<i class="fas fa-clipboard-check"></i>
 								<p>Tareas</p>
 								<span class="caret"></span>
 							</a>
@@ -280,6 +292,11 @@
 
 		<!-- End Custom template -->
 	</div>
+
+	<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+	
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 	<!--   Core JS Files   -->
 	<script src="{% static '/assets/js/core/jquery.3.2.1.min.js' %}"></script>
 	<script src="{% static '/assets/js/core/popper.min.js' %}"></script>
@@ -304,6 +321,7 @@
 
 	<!-- Datatables -->
 	<script src="{% static '/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+	<script src="{% static '/assets/js/datatables.js' %}"></script>
 
 	<!-- Bootstrap Notify -->
 	<script src="{% static '/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
@@ -319,8 +337,8 @@
 	<script src="{% static '/assets/js/atlantis.min.js' %}"></script>
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
-	<script src="{% static '/assets/js/setting-demo.js' %}"></script>
-	<script src="{% static '/assets/js/demo.js' %}"></script>
+	<!-- <script src="{% static '/assets/js/setting-demo.js' %}"></script>
+	<script src="{% static '/assets/js/demo.js' %}"></script> -->
 	<script>
 		Circles.create({
 			id: 'circles-1',
@@ -414,6 +432,8 @@
 			lineColor: '#ffa534',
 			fillColor: 'rgba(255, 165, 52, .14)'
 		});
+
+		
 	</script>
 </body>
 

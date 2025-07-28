@@ -1,0 +1,100 @@
+{% block content %}
+
+<!-- Form Members Proyect -->
+<div class="modal fade" id="addRowModalMembers" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Integrante Proyecto:</span>
+                    <span class="fw-light" id="project_name"></span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="small">Formulario para agregar integrantes al proyecto</p>
+                <form method="POST" action="{% url 'assing_members_project' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <p class="small">Datos integrante</p>
+                        </div>
+                        <input type="hidden" id="project_id" name="project_id">
+                        <div class="col-md-6 pr-0">
+                            <div class="form-group form-group-default">
+                                <label>Nombre</label>
+                                <select class="form-control" id="integranteSelect" name="integranteSelect">
+                                    <option value="">Selecione Integrante</option>
+                                    {% for integrante in integrantes %}
+                                    <option value="{{integrante.id}}">{{integrante.user.first_name}}
+                                        {{integrante.user.last_name}}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Cedula</label>
+                                <input id="cedula" name="cedula" type="text" class="form-control"
+                                    placeholder="Cedula estudiante" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Codigo</label>
+                                <input id="student_code" name="student_code" type="text" class="form-control"
+                                    placeholder="Codigo estudiante" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Correo</label>
+                                <input id="institutional_mail" name="institutional_mail" type="text"
+                                    class="form-control" placeholder="Correo institucional" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="addRowButtonMembers" class="btn btn-success"
+                        id="alert_demo_1_1">Agregar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </form>
+            </div>
+            <div class="modal-footer no-bd">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $('#integranteSelect').on('change', function(){
+        let integranteId = $(this).val()
+        console.log(integranteId)
+        if(integranteId){
+            $.ajax({
+                url: '/integrantes/ajax-detalle/',
+                data: {
+                    'integrante_id': integranteId
+                },
+                success: function (data){
+                    $('#cedula').val(data.cedula);
+                    $('#student_code').val(data.student_code);
+                    $('#institutional_mail').val(data.institutional_mail);
+                },
+                error: function () {
+                    alert("Error al obtener los datos del integrante");
+                }
+            });
+        }else{
+            $('#cedula').val('');
+            $('#student_code').val('');
+            $('#institutional_mail'.val(''));
+        }
+    });
+</script>
+
+{% endblock %}

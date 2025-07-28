@@ -1,27 +1,135 @@
 {% extends 'layouts/principalMenu.html' %}
-<!-- 
-    Esta sección inicia el contenedor principal de la página de proyectos, utilizando la clase "container-fluid" de Bootstrap para garantizar una respuesta completa.
--->
+
 {% block content %}
-<div class="container-fluid">
+
+<div class="col-md-12">
     <div class="card">
-        <div class="card-body">
-            <h1>Pagina de projectos</h1>
-            {% for project in projects %}
-            <article class="card">
-                <a href="{% url 'project_detail' project.id %}">
-                    <h1>{{project.name}}</h1>
-                </a>
-                
-            </article>
-            {% endfor %} 
+        <div class="card-header">
+            <div class="d-flex align-items-center">
+                <h4 class="card-title">Listado de proyectos</h4>
+                <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addRowModal">
+                    <i class="fa fa-plus"></i>
+                    Agregar proyectos
+                </button>
+            </div>
         </div>
-      
+        <div class="card-body">
+            <!-- Modal para adicionar proyectos -->
+            {% include "projects/create_project.html" %}
+
+            <!-- Modal Editar Proyectos -->
+            <div class="modal fade" id="addRowModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <span class="fw-mediumbold">
+                                    Editar</span>
+                                <span class="fw-light">
+                                    Proyecto
+                                </span>
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modal-body-content-edit">
+                            <p class="small">Formulario para agregar nuevos proyectos</p>
+                            <!-- Aquí HTMX insertará el formulario -->
+                        </div>
+                        <div class="modal-footer no-bd">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal detalles del Proyectos -->
+            <div class="modal fade" id="addRowModalDetail" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <span class="fw-mediumbold">
+                                    Informacion del Proyecto</span>
+                                <span class="fw-light">
+                                </span>
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modal-body-content-detail">
+                            <p class="small">Detalles completos del proyecto</p>
+                            <!-- Aquí HTMX insertará el formulario -->
+                        </div>
+                        <div class="modal-footer no-bd">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal para agregar integrantes al proyectos -->
+            {% include "projects/project_members.html" %}
+
+            <div class="table-responsive">
+                <table id="add-row" class="display table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID Proyectos</th>
+                            <th>Titulo Proyectos</th>
+                            <th>Tema Investigación</th>
+                            <th>Horario reuniones</th>
+                            <th>Integrantes Proyecto</th>
+                            <th style="width: 10%">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                        <tr>
+                            <td>{{project.id}}</td>
+                            <td><a href="" type="button" data-toggle="modal" data-target="#addRowModalDetail"
+                                    hx-get="{% url 'project_detail' id=project.id %}"
+                                    hx-target="#modal-body-content-detail" hx-trigger="click">{{project.name}}</a></td>
+                            <td>{{project.tema_investigacion}}</td>
+                            <td>{{project.horario_reunion}}</td>
+                            <td>
+                                {% for integrante in integrantes %}
+                                {% if project.id == integrante.project_id %}
+                                {{integrante.user.first_name }} {{integrante.user.last_name}}{% if not forloop.last %} ... {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <div class="form-button-action">
+                                    <button type="button" title="Edit Project" class="btn btn-link btn-primary btn-lg "
+                                        data-original-title="Edit Project" data-toggle="modal"
+                                        data-target="#addRowModalEdit" hx-get="{% url 'project_edit' id=project.id %}"
+                                        hx-target="#modal-body-content-edit" hx-trigger="click">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button type="button" data-toggle="modal" data-target="#addRowModalMembers"
+                                        title="Add Student" class="btn btn-link btn-primary btn-lg"
+                                        data-original-title="Add Student" data-id="{{ project.id }}"
+                                        data-name="{{ project.name }}">
+                                        <i class="fas fa-user-friends"></i>
+                                    </button>
+                                    <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-primary btn-lg" data-original-title="Ver">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <!-- <button type="button" data-toggle="tooltip" title="" class="btn btn-link btn-
+                                    danger" data-original-title="Remove">
+                                        <i class="fa fa-times"></i>
+                                    </button> -->
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-   
-
 </div>
-
-
 
 {% endblock %}

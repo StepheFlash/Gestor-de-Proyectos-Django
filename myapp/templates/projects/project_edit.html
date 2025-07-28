@@ -1,0 +1,69 @@
+{% block content %}
+{% if project %}
+<form method="POST" id="editProjectForm" action="{% url 'project_edit' project.id %}" hx-target="#modal-body-content-edit" hx-swap="outerHTML">
+    <p class="small">{{error}}</p>
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group form-group-default">
+                <label>Titulo</label>
+                <input id="name" name="name" type="text" class="form-control" placeholder="Titulo del projecto"
+                    value="{{project.name}}">
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group form-group-default">
+                <label>Horario</label>
+                <input id="horario_reunion" name="horario_reunion" type="text" class="form-control"
+                    placeholder="Horario de la reuniones" value="{{project.horario_reunion}}">
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="form-group form-group-default">
+                <label>Tema</label>
+                <input id="tema_investigacion" name="tema_investigacion" type="text" class="form-control"
+                    placeholder="Tema de investigación" value="{{project.tema_investigacion}}">
+            </div>
+        </div>
+        {% for integrante in integrantes %}
+        <div class="col-sm-12">
+            <p class="small">Datos integrante</p>
+        </div>
+        <div class="col-md-6 pr-0">
+            <div class="form-group form-group-default">
+                <label>Nombre</label>
+                <input id="integrante_name_{{integrante.id}}" name="integrante_name_{{integrante.id}}" type="text"
+                    class="form-control" placeholder="Nombre estudiante" value="{{integrante.name}}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group form-group-default">
+                <label>Cedula</label>
+                <input id="cedula_{{integrante.id}}" name="cedula_{{integrante.id}}" type="text" class="form-control"
+                    placeholder="Cedula estudiante" value="{{integrante.cedula}}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group form-group-default">
+                <label>Codigo</label>
+                <input id="student_code_{{integrante.id}}" name="student_code_{{integrante.id}}" type="text"
+                    class="form-control" placeholder="Codigo estudiante" value="{{integrante.student_code}}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group form-group-default">
+                <label>Correo</label>
+                <input id="institutional_mail_{{integrante.id}}" name="institutional_mail_{{integrante.id}}" type="text"
+                    class="form-control" placeholder="Correo institucional" value="{{integrante.institutional_mail}}">
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-warning">Gardar Cambios</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+    <!-- <button  class="btn btn-success">Completado</button>
+        <button  class="btn btn-danger">Eliminar</button> -->
+</form>
+{% endif %}
+
+{% endblock %}

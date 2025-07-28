@@ -23,8 +23,8 @@ Esta sección inicia es el formulario para la creacion de tareas, utilizando la 
                 <div class="mb-3">
                     <label for="project">Proyecto:</label>
                     <select  name="project" id="project" class="form-control form-control">
-                        {%for projrct in projects %}
-                        <option value="{{projrct.id}}">**{{projrct.name}}**</option>
+                        {%for project in projects %}
+                        <option value="{{project.id}}">**{{project.name}}**</option>
                         {% endfor %}
                     </select>
                 </div class="mb-3">
