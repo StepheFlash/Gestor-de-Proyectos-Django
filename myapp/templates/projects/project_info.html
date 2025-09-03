@@ -1,0 +1,225 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Proyecto</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'index' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'projects' %}">Proyectos</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'project_info' project.id %}">Informacion proyecto</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary bg-primary-gradient">
+                <div class="card-header">
+                    <div class="card-title">Informacion Proyecto</div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h3>Titulo</h3>
+                                </td>
+                                <td>
+                                    <h3>Tema de Investigación</h3>
+                                </td>
+                                <td>
+                                    <h3>Horario de Reunion</h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{{project.name}}</td>
+                                <td>{{project.tema_investigacion}}</td>
+                                <td>{{project.horario_reunion}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <h3>Integrantges</h3>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h3>Nombre</h3>
+                                </td>
+                                <td>
+                                    <h3>Codigo estudiante</h3>
+                                </td>
+                                <td>
+                                    <h3>Correo institucional</h3>
+                                </td>
+                            </tr>
+                            {% for integrante in integrantes %}
+                            <tr>
+                                <td>{{integrante.user.first_name}} {{integrante.user.last_name}}
+                                </td>
+                                <td>{{integrante.student_code}}</td>
+                                <td>{{integrante.user.email}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-primary bg-primary-gradient">
+                <div class="card-body">
+                    <h5 class="card-title">Progreso general</h5>
+                    <div id="task-complete" class="chart-circle mt-4 mb-3"></div>
+                    <span id="task-complete-value" style="display:none;">10</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h5 class="card-title">Etapas del Proyecto</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="add-row" class="display table table-striped table-hover" cellspacing="0"
+                            width="100%">
+                            <thead>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Etapa</td>
+                                    <td>Progreso</td>
+                                    <td style="width: 10%;">Actividades</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stage in stages %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{stage.title}}</td>
+                                    <td>
+                                        <div class="progress-status">
+                                            <span class="text-muted">Actividades Completas</span>
+                                            <span class="text-muted fw-bold"> 70%</span>
+                                        </div>
+                                        <div class="progress" style="height: 13px;">
+                                            <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated"
+                                                role="progressbar" style="width: 70%" aria-valuenow="70"
+                                                aria-valuemin="0" aria-valuemax="100" data-toggle="tooltip"
+                                                data-placement="top" title="" data-original-title="70%"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-info dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Activities
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                {% for activity in activities %}
+                                                {% if activity.etapa_id == stage.id %}
+                                                <a class="dropdown-item" href="{% url 'project_activities_tasks' project.id activity.id %}">{{activity.title}}
+                                                </a>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h5 class="card-title">Documentos del Proyecto</h5>
+                        <button class="btn btn-primary btn-round ml-auto" data-toggle="modal"
+                            data-target="#ModalAddDocument" data-idproject="{{project.id}}" data-nameproject="{{project.name}}">
+                            <i class="fa fa-plus"></i>
+                            Agregar Documento
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Modal Add Document-->
+                    {% include "projects/documents/document_add.html" %}
+                    <!-- Modal edit Document-->
+                    {% include "projects/documents/document_edit.html" %}
+                    <!-- Modal detail Document-->
+                    {% include "projects/documents/document_detail.html" %}
+                    <!-- Table -->
+                    <div class="table-responsive">
+                        <table id="add-row" class="display table table-striped table-hover" cellspacing="0"
+                            width="100%">
+                            <thead>
+                                <tr>
+                                    <td>id</td>
+                                    <td>Titulo Doc</td>
+                                    <td>Fecha Creacion</td>
+                                    <td style="width: 10%;">acciones</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for document in documents %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ document.title_doc }}</td>
+                                    <td>{{ document.date_uploaded }}</td>
+                                    <td>
+                                        <div class="form-button-action">
+                                            <button type="button" data-toggle="modal" title=""
+                                                class="btn btn-link btn-info" data-original-title="Detalles"
+                                                data-target="#ModalDetailDocument"
+                                                hx-get="{% url 'project_document_detail' id_document=document.id %}"
+                                                hx-target="#modal-body-detail-document" hx-trigger="click">
+                                                <i class="fa fa-info"></i>
+                                            </button>
+                                            <button type="button" data-toggle="modal" title=""
+                                                class="btn btn-link btn-warning btn-lg"
+                                                data-original-title="Editar Documento"
+                                                data-target="#ModalEditDocument"
+                                                hx-get="{% url 'project_document_edit' id_document=document.id %}"
+                                                hx-target="#modal-body-edit-document" hx-trigger="click">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <a type="button" target="_blank" data-toggle="tooltip" title=""
+                                                class="btn btn-link btn-primary btn-lg" data-original-title="Ver"
+                                                href="{{document.upload_path}}">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,27 +1,6 @@
 from django.db import models
-"""
-Este módulo define los modelos de datos de la aplicación.
-Clases:
-    Proyecto: Representa un proyecto con un nombre.
-    Tarea: Representa una tarea asociada a un proyecto y un usuario, incluyendo detalles como título, descripción, fecha de creación, fecha de finalización e importancia.
-Modelos:
-  Proyecto:
-    Campos:
-        name (CharField): El nombre del proyecto.
-    Métodos:
-        __str__: Devuelve el nombre del proyecto.
-  Tarea:
-    Campos:
-        title (CharField): El título de la tarea.
-        description (TextField): La descripción de la tarea (opcional).
-        roject (ForeignKey): Referencia al proyecto asociado.
-        created (DateTimeField): Marca de tiempo de creación de la tarea.
-        datecompleted (DateTimeField): Marca de tiempo de finalización de la tarea (opcional).
-        important (BooleanField): Indica si la tarea es importante. usuario (ForeignKey): Referencia al usuario propietario de la tarea.
-    Métodos:
-    __str__: Devuelve una cadena que representa la tarea, incluyendo su título y el nombre de usuario del propietario.
-"""
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 # Create your models here.
 
@@ -35,31 +14,68 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-
-class Integrantes(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, blank=True, null=True, related_name='integrantes')
+class Studentuser(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.SET_NULL, blank=True, null=True, related_name='integrantes')
     user =  models.OneToOneField(User, on_delete=models.CASCADE)
     cedula = models.CharField(max_length=20, blank=True)
     student_code = models.CharField(max_length=20,blank=True)
-    #institutional_mail = models.EmailField()
-    #name = models.CharField(max_length=100)
 
     def __str__(self):
         return f"{self.user.get_full_name()}({self.cedula})"
+    
+class Metting(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    meeting_date = models.DateTimeField(null=True,blank=True)
+    agenda = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
+    meeting_link = models.TextField(blank=True,null=True)
+
+class Document(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True)
+    title_doc = models.CharField(max_length=150)
+    content_doc = models.TextField(blank=True)
+    upload_path = models.URLField(blank=True)
+    feedback = models.TextField(blank=True)
+    date_uploaded = models.DateField(null=True)
+    
+
+    def __str__(self):
+         return f"{self.title_doc} (Proyecto: {self.project.name})"
+
+#Tabla estapas(plantilla)
+class Stage(models.Model):
+    title = models.CharField()
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.title
+
+#Tabla actividades(plantilla)
+class Activity(models.Model):
+    etapa = models.ForeignKey(Stage, on_delete=models.CASCADE)
+    title = models.CharField()
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.title} (Etapa: {self.etapa.title})"
+
 
 class Task(models.Model):
+    # on_delete=models.CASCADE es una funcion que se encarga de borrar los datos relacionados
+    #Llaves foraneas
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True,blank=True)
+    document = models.ForeignKey(Document, on_delete=models.SET_NULL, blank=True, null=True)
+    activity = models.ForeignKey(Activity,on_delete=models.CASCADE) 
+    #user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    #Datos propios de la tabla
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    # on_delete=models.CASCADE es una funcion que se encarga de borrar los datos relacionados
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    # done = models.BooleanField(default=False)
-
-    # Campo nuevos
-    created = models.DateTimeField(auto_now_add=True)
-    datecompleted = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(default = 'Pendiente')
+    date_created = models.DateTimeField(default=timezone.now)
+    date_completed = models.DateTimeField(null=True,blank=True)
+    feedback = models.TextField(blank=True)
     important = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     # //Funcion para cambiar el titulo de las listas desde el admin
     def __str__(self):
-        return self.title + ' de ' + self.user.username
+        return f"{self.title} (Proyecto: {self.project.name})"

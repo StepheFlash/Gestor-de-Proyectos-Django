@@ -1,44 +1,72 @@
-{% extends 'layouts/principalMenu.html' %}
-
 {% block content %}
-<!--
-Esta sección inicia es el formulario para la creacion de tareas, utilizando la clase "container" de Bootstrap para garantizar una respuesta completa.
--->
 
-<main class="container">
-    <div class="row">
-        <div class="col-md-4 offset-md-4">
-            <form action="/task/create/" method="POST" class="card card-body">
-                <h1>Crear Nueva Tarea</h1>
-                {{error}}
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="title">Titulo Tarea:</label>
-                    <input type="text" name="title" id="title" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label for="description">Descripcion Tarea:</label>
-                    <textarea name="description" id="description" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="project">Proyecto:</label>
-                    <select  name="project" id="project" class="form-control form-control">
-                        {%for project in projects %}
-                        <option value="{{project.id}}">**{{project.name}}**</option>
-                        {% endfor %}
-                    </select>
-                </div class="mb-3">
-                <div class="mb-3">
-					<label class="form-check-label" for="important">
-                        ¿Importante?:
-						<input classs="form-check-input" type="checkbox" name="important" id="important">
-					</label>
-				</div>
-                <button>Guardar</button>
-            </form>
+<!-- Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h4 class="modal-title">
+                    <span class="fw-mediumbold">Nueva</span>
+                    <span class="fw-light">Tarea</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+                <form method="POST" id="createTaskForm" action="{% url 'create_task_project' %}">
+                    <p>Formulario para la creacion de la tareas de cada una de las actividades</p>
+                    {{error}}
+                    {% csrf_token %}
+                    <input type="hidden" id="id_project" name="id_project" value="">
+                    <input type="hidden" id="id_activity" name="id_activity" value="">
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="title">Titulo</label>
+                            <input type="text" name="title" id="title" class="form-control" placeholder="Titulo tarea">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="description">Descripción</label>
+                            <textarea name="description" id="description" class="form-control"
+                                placeholder="Descripción de la tarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="documentSelect">Documento asociado:</label>
+                            <select class="form-control" id="documentSelect" name="documentSelect">
+                                <option value="">Seleccione el documento</option>
+                                {% for document in documents %}
+                                <option value="{{document.id}}">{{document.title_doc}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="important" id="important">
+                                <span class="form-check-sign">Marcar como importante</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer no-bd">
+                <!-- <button type="button" id="addRowButton" class="btn btn-primary">Add</button> -->
+            </div>
         </div>
     </div>
-</main>
+</div>
+
 
 
 {% endblock %}

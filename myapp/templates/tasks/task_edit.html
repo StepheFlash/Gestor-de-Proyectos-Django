@@ -1,0 +1,91 @@
+{% block content %}
+
+<div class="modal fade" id="ModalEditTask" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Editar</span>
+                    <span class="fw-light">
+                        Tarea
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-task-edit">
+                <p class="small">Formulario para agregar documentos del proyecto</p>
+            </div>
+            <!-- <div class="modal-footer no-bd">
+                <button type="button" id="addRowButton" class="btn btn-primary">Agregar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+{% if task %}
+<form method="POST" id="editTaskForm" action="{% url 'task_edit' task.id %}" hx-target="#modal-body-task-edit"
+    hx-swap="outerHTML">
+    <p>Formulario para la creacion de la tareas de cada una de las actividades</p>
+    {{error}}
+    {% csrf_token %}
+    <input type="hidden" name="id_task" value="{{ task.id }}">
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="title">Titulo</label>
+            <input type="text" name="title" id="title" class="form-control" value="{{task.title}}">
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="description">Descripción</label>
+            <textarea name="description" id="description" class="form-control"
+                placeholder="Descripción de la tarea">{{task.description}}</textarea>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="statusSelect">Estado</label>
+            <select class="form-control" id="statusSelect" name="statusSelect">
+                <option {% if task.status == "Pendiente" %}selected{% endif %}>Pendiente</option>
+                <option {% if task.status == "En proceso" %}selected{% endif %}>En proceso</option>
+                <option {% if task.status == "Completado" %}selected{% endif %}>Completado</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="documentSelect">Documento asociado:</label>
+            <select class="form-control" id="documentSelect" name="documentSelect">
+                <option value="{{task.document.id}}">{{task.document.title_doc}}</option>
+                <option value="">Ninguno</option>
+                {% for document in documents %}
+                {% if document.id != task.document_id %}
+                <option value="{{document.id}}">{{document.title_doc}}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-check">
+            <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="important" id="important" {% if task.important %}checked{% endif %}>
+                <span class="form-check-sign">Marca como importante</span>
+            </label>
+        </div>
+    </div>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <div class="text-right">
+        <button class="btn btn-primary">Actualizar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+    </div>
+</form>
+<div id="formError" class="alert alert-danger mt-2 d-none"></div>
+{% endif %}
+{% endblock %}

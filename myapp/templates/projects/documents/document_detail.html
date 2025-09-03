@@ -1,0 +1,89 @@
+{% block content %}
+
+<!-- Modal detail Document-->
+
+<div class="modal fade" id="ModalDetailDocument" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Detalles</span>
+                    <span class="fw-light">
+                        Documento
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-detail-document">
+                <p class="small">Vista detalles documento del proyecto</p>
+            </div>
+            <div class="modal-footer no-bd">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% if document %}
+<!-- Tabla del modal -->
+<div class="row">
+    <div class="col-md-12">
+        <table hx-target="modal-body-detail-document" hx-swap="outerHTML" style="width: 760px;">
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <label>Titulo del Documento</label>
+                                <p>{{document.title_doc}}</p>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <label>Descripcion del documento</label>
+                                <p>{{document.content_doc}}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <label>Fecha de Creacion</label>
+                                <a>{{ document.date_uploaded|date:'Y-m-d' }}</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <a href="{{document.upload_path}}" type="button" class="btn btn-default"
+                                    target="_blank">
+                                    <span>
+                                        <i class="fa fa-link">
+                                        </i>
+                                        Link Documento
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

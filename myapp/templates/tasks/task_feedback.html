@@ -1,0 +1,56 @@
+{% block content %}
+
+<!-- Modal Feedbalck Taks-->
+
+<div class="modal fade" id="ModalFeedbackTask" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Retroalimentacion</span>
+                    <span class="fw-light">
+                        Tarea
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-task-feedback">
+                <p class="small">Formulario para agregar documentos del proyecto</p>
+            </div>
+            <!-- <div class="modal-footer no-bd">
+                <button type="button" id="addRowButton" class="btn btn-primary">Agregar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+{% if task %}
+<form method="POST" action="{% url 'task_feedback' task.id %}" hx-target="#modal-body-task-feedback" hx-swap="outerHTML">
+    {% csrf_token %}
+    <input type="hidden" id="id_project_doc" name="id_project_doc">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group form-group-default">
+                <label>Titulo de la tarea</label>
+                <h5>{{task.title}}</h5>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group form-group-default">
+                <label for="feedback" >Retroalimentacion</label>
+                <textarea id="feedback" name="feedback" type="text" class="form-control"
+                    aria-label="Agrega una retroalimentación sobre esta tarea" rows="3">{{task.feedback}}</textarea>
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Agregar</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+</form>
+
+{% endif %}
+
+{% endblock %}

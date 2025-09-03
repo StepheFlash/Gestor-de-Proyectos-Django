@@ -1,13 +1,41 @@
 {% block content %}
+
+<!-- Modal detalles del Proyectos -->
+<div class="modal fade" id="addRowModalDetail" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Informacion del Proyecto</span>
+                    <span class="fw-light">
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-content-detail">
+                <p class="small">Detalles completos del proyecto</p>
+                <!-- Aquí HTMX insertará el formulario -->
+            </div>
+            <div class="modal-footer no-bd">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {% if project %}
-<form method="POST" id="detailProjectForm" action="{% url 'project_detail' project.id %}" hx-target="#modal-body-content-detail" hx-swap="outerHTML">
+<form method="POST" id="detailProjectForm" action="{% url 'project_detail' project.id %}"
+    hx-target="#modal-body-content-detail" hx-swap="outerHTML">
     {% csrf_token %}
     <div class="row">
         <div class="col-sm-12">
             <div class="form-group form-group-default">
                 <label>Titulo</label>
-                <input id="name" name="name" type="text" class="form-control"
-                    value="{{project.name}}" disabled>
+                <input id="name" name="name" type="text" class="form-control" value="{{project.name}}" disabled>
             </div>
         </div>
         <div class="col-sm-12">

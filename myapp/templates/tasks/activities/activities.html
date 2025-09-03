@@ -1,0 +1,108 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content%}
+
+<!-- 
+    Esta sección inicia el contenedor principal de la página de tareas, utilizando la clase "container-fluid" de Bootstrap para garantizar una respuesta completa.
+-->
+<div class="card card-documentation">
+    <div class="card-header bg-info-gradient text-white bubble-shadow">
+        <div class="page-inner py-5">
+            <h2 class="text-center display-3">Actividades</h2>
+        </div>
+    </div>
+</div>
+
+<div class="page-inner">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Listado Actividades Planteamiento del Proyecto</h5>
+                    <div class="table-responsive">
+                        <table id="add-row" class="display table table-striped table-hover" cellspacing="0"
+                            width="100%">
+                            <thead>
+                                <tr>
+                                    <td>Nro</td>
+                                    <td>Actividad</td>
+                                    <td>Etapa</td>
+                                    <td style="width: 10%;">acciones</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for planteamiento in activity_planteamiento %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ planteamiento.title }}</td>
+                                    <td>{{ planteamiento.etapa.title }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-info dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#addTaskModal"
+                                                    href="#">Crear Tarea</a>
+                                                <a class="dropdown-item" href="#">Modificar Actividad</a>
+                                                <a class="dropdown-item" href="#">Eliminar Actividad</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+               <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Listado Actividades Planificación del Proyecto</h5>
+                    <div class="table-responsive">
+                        <table id="add-row" class="display table table-striped table-hover" cellspacing="0"
+                            width="100%">
+                            <thead>
+                                <tr>
+                                    <td>Nro</td>
+                                    <td>Actividad</td>
+                                    <td>Etapa</td>
+                                    <td style="width: 10%;">acciones</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for planificacion in activity_planificacion %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ planificacion.title }}</td>
+                                    <td>{{ planificacion.etapa.title }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-info dropdown-toggle"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item" data-toggle="modal" data-target="#addTaskModal"
+                                                    href="#">Crear Tarea</a>
+                                                <a class="dropdown-item" href="#">Modificar Tarea</a>
+                                                <a class="dropdown-item" href="#">Eliminar Tareas</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

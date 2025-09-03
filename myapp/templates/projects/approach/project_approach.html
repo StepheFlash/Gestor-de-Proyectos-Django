@@ -1,17 +1,22 @@
 {% extends 'layouts/principalMenu.html' %}
 
+{% load static %}
+
 {% block content %}
+
 <div class="card card-documentation">
     <div class="card-header bg-info-gradient text-white bubble-shadow">
         <div class="page-inner py-5">
-            <h4>Planteamiento del Proyecto</h4>
-            <p class="mb-0 op-8">Guía paso a paso para desarrollar el planteamiento completo de tu proyecto de software
+            <h4 class="text-center display-4">Planteamiento del Proyecto</h4>
+            <p class="mb-0 op-8 text-center">Guía paso a paso para desarrollar el planteamiento completo de tu proyecto
+                de software
             </p>
         </div>
     </div>
 </div>
 <div class="container-fluid">
     <div class="row">
+        <!-- Definicion contexto del proyecto -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -21,40 +26,43 @@
                     <ul class="nav nav-pills nav-secondary  nav-pills-no-bd nav-pills-icons justify-content-center"
                         id="pills-tab-with-icon" role="tablist">
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-home-tab-icon" data-toggle="pill" href="#pills-home-icon"
-                                role="tab" aria-controls="pills-home-icon" aria-selected="false">
+                            <a class="nav-link" id="pills-home-tab-icon-one" data-toggle="pill" href="#pills-home-icon-uno"
+                                role="tab" aria-controls="pills-home-icon-uno" aria-selected="false">
                                 <i class="flaticon-interface-2"></i>Guía explicativa
                             </a>
                         </li>
                         <li class="nav-item submenu">
                             <a class="nav-link" id="pills-profile-tab-icon" data-toggle="pill"
-                                href="#pills-profile-icon" role="tab" aria-controls="pills-profile-icon"
+                                href="#pills-profile-icon-uno" role="tab" aria-controls="pills-profile-icon-uno"
                                 aria-selected="false"><i class="flaticon-youtube"></i>Video Tutorial
                             </a>
                         </li>
                         <li class="nav-item submenu">
                             <a class="nav-link" id="pills-contact-tab-icon" data-toggle="pill"
-                                href="#pills-contact-icon" role="tab" aria-controls="pills-contact-icon"
+                                href="#pills-contact-icon-uno" role="tab" aria-controls="pills-contact-icon-uno"
                                 aria-selected="false"><i class="flaticon-file"></i>Ejemplos
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content mt-2 mb-3" id="pills-with-icon-tabContent">
-                        <div class="tab-pane fade show active" id="pills-home-icon" role="tabpanel"
+                        <div class="tab-pane fade show active" id="pills-home-icon-uno" role="tabpanel"
                             aria-labelledby="pills-home-tab-icon">
-                            <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia,
-                                there live the blind texts. Separated they live in Bookmarksgrove right at the coast of
-                                the Semantics, a large language ocean.</p>
 
-                            <p>A small river named Duden flows by their place and supplies it with the necessary
-                                regelialia. It is a paradisematic country, in which roasted parts of sentences fly into
-                                your mouth.</p>
-                            <button class="btn btn-info">
-								<span class="btn-label"><i class="fa fa-info"></i></span>
-								Mas informacion.
-							</button>
+                            <p>El contexto de un proyecto de software es el conjunto de condiciones, factores y          circunstancias —tanto internas como externas— que influyen directa o
+                            indirectamente en la planificación, ejecución, entrega y operación de un sistema de
+                            software.</p>
+                            
+                            <p>En otras palabras, el contexto es "el escenario completo" en el que se desarrolla un proyecto:
+                            sus restricciones, oportunidades, actores,entorno organizacional, tecnológico, normativo
+                            y social</p>
+                            <a href="{% static 'resources/PlanteamientoProyectoSoftware.pdf' %}" target="_blank">
+                                <button class="btn btn-info">
+                                    <span class="btn-label"><i class="fa fa-info"></i></span>
+                                    Mas informacion.
+                                </button>
+                            </a>
                         </div>
-                        <div class="tab-pane fade" id="pills-profile-icon" role="tabpanel"
+                        <div class="tab-pane fade" id="pills-profile-icon-uno" role="tabpanel"
                             aria-labelledby="pills-profile-tab-icon">
                             <p>Even the all-powerful Pointing has no control about the blind texts it is an almost
                                 unorthographic life One day however a small line of blind text by the name of Lorem
@@ -63,12 +71,13 @@
                                 Question Marks and devious Semikoli, but the Little Blind Text didn’t listen. She packed
                                 her seven versalia, put her initial into the belt and made herself on the way.
                             </p>
-                              <button class="btn btn-info">
-								<span class="btn-label"><i class="fa fa-info"></i></span>
-								Mas informacion.
-							</button>
+                            <button class="btn btn-info">
+                                <span class="btn-label"><i class="fa fa-info"></i></span>
+                                Mas informacion.
+                            </button>
+
                         </div>
-                        <div class="tab-pane fade" id="pills-contact-icon" role="tabpanel"
+                        <div class="tab-pane fade" id="pills-contact-icon-uno" role="tabpanel"
                             aria-labelledby="pills-contact-tab-icon">
                             <p>Pityful a rethoric question ran over her cheek, then she continued her way. On her way
                                 she met a copy. The copy warned the Little Blind Text, that where it came from it would
@@ -79,16 +88,17 @@
                             <p> But nothing the copy said could convince her and so it didn’t take long until a few
                                 insidious Copy Writers ambushed her, made her drunk with Longe and Parole and dragged
                                 her into their agency, where they abused her for their</p>
-                                  <button class="btn btn-info">
-								<span class="btn-label"><i class="fa fa-info"></i></span>
-								Mas informacion.
-							</button>
+                            <button class="btn btn-info">
+                                <span class="btn-label"><i class="fa fa-info"></i></span>
+                                Mas informacion.
+                            </button>
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
+        <!-- Definicion problema del proyecto -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -98,26 +108,26 @@
                     <ul class="nav nav-pills nav-secondary  nav-pills-no-bd nav-pills-icons justify-content-center"
                         id="pills-tab-with-icon" role="tablist">
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-home-tab-icon" data-toggle="pill" href="#pills-home-icon"
-                                role="tab" aria-controls="pills-home-icon" aria-selected="false"><i
+                            <a class="nav-link" id="pills-home-tab-icon-two" data-toggle="pill" href="#pills-home-icon-two"
+                                role="tab" aria-controls="pills-home-icon-two" aria-selected="false"><i
                                     class="flaticon-interface-2"></i>Guía Explicativa
                             </a>
                         </li>
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-profile-tab-icon" data-toggle="pill"
-                                href="#pills-profile-icon" role="tab" aria-controls="pills-profile-icon"
+                            <a class="nav-link" id="pills-profile-tab-icon-two" data-toggle="pill"
+                                href="#pills-profile-icon-two" role="tab" aria-controls="pills-profile-icon-two"
                                 aria-selected="false"><i class="flaticon-youtube"></i>Video Tutorial
                             </a>
                         </li>
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-contact-tab-icon" data-toggle="pill"
-                                href="#pills-contact-icon" role="tab" aria-controls="pills-contact-icon"
+                            <a class="nav-link" id="pills-contact-tab-icon-two" data-toggle="pill"
+                                href="#pills-contact-icon-two" role="tab" aria-controls="pills-contact-icon-two"
                                 aria-selected="false"><i class="flaticon-file"></i>Ejemplo
                             </a>
                         </li>
                     </ul>
-                    <div class="tab-content mt-2 mb-3" id="pills-with-icon-tabContent">
-                        <div class="tab-pane fade show active" id="pills-home-icon" role="tabpanel"
+                    <div class="tab-content mt-2 mb-3" id="pills-with-icon-tabContent-two">
+                        <div class="tab-pane fade show active" id="pills-home-icon-two" role="tabpanel"
                             aria-labelledby="pills-home-tab-icon">
                             <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia,
                                 there live the blind texts. Separated they live in Bookmarksgrove right at the coast of
@@ -127,7 +137,7 @@
                                 regelialia. It is a paradisematic country, in which roasted parts of sentences fly into
                                 your mouth.</p>
                         </div>
-                        <div class="tab-pane fade" id="pills-profile-icon" role="tabpanel"
+                        <div class="tab-pane fade" id="pills-profile-icon-two" role="tabpanel"
                             aria-labelledby="pills-profile-tab-icon">
                             <p>Even the all-powerful Pointing has no control about the blind texts it is an almost
                                 unorthographic life One day however a small line of blind text by the name of Lorem
@@ -137,7 +147,7 @@
                                 her seven versalia, put her initial into the belt and made herself on the way.
                             </p>
                         </div>
-                        <div class="tab-pane fade" id="pills-contact-icon" role="tabpanel"
+                        <div class="tab-pane fade" id="pills-contact-icon-two" role="tabpanel"
                             aria-labelledby="pills-contact-tab-icon">
                             <p>Pityful a rethoric question ran over her cheek, then she continued her way. On her way
                                 she met a copy. The copy warned the Little Blind Text, that where it came from it would
@@ -154,6 +164,7 @@
 
             </div>
         </div>
+        <!-- Definicion idea del proyecto -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
@@ -163,26 +174,26 @@
                     <ul class="nav nav-pills nav-secondary  nav-pills-no-bd nav-pills-icons justify-content-center"
                         id="pills-tab-with-icon" role="tablist">
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-home-tab-icon" data-toggle="pill" href="#pills-home-icon"
-                                role="tab" aria-controls="pills-home-icon" aria-selected="false"><i
+                            <a class="nav-link" id="pills-home-tab-icon-three" data-toggle="pill" href="#pills-home-icon-three"
+                                role="tab" aria-controls="pills-home-icon-three" aria-selected="false"><i
                                     class="flaticon-interface-2"></i>Guía Explicativa
                             </a>
                         </li>
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-profile-tab-icon" data-toggle="pill"
-                                href="#pills-profile-icon" role="tab" aria-controls="pills-profile-icon"
+                            <a class="nav-link" id="pills-profile-tab-icon-three" data-toggle="pill"
+                                href="#pills-profile-icon-three" role="tab" aria-controls="pills-profile-icon-three"
                                 aria-selected="false"><i class="flaticon-youtube"></i>Video Tutorial
                             </a>
                         </li>
                         <li class="nav-item submenu">
-                            <a class="nav-link" id="pills-contact-tab-icon" data-toggle="pill"
-                                href="#pills-contact-icon" role="tab" aria-controls="pills-contact-icon"
+                            <a class="nav-link" id="pills-contact-tab-icon-three" data-toggle="pill"
+                                href="#pills-contact-icon-three" role="tab" aria-controls="pills-contact-icon-three"
                                 aria-selected="false"><i class="flaticon-file"></i>Ejemplos
                             </a>
                         </li>
                     </ul>
                     <div class="tab-content mt-2 mb-3" id="pills-with-icon-tabContent">
-                        <div class="tab-pane fade show active" id="pills-home-icon" role="tabpanel"
+                        <div class="tab-pane fade show active" id="pills-home-icon-three" role="tabpanel"
                             aria-labelledby="pills-home-tab-icon">
                             <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia,
                                 there live the blind texts. Separated they live in Bookmarksgrove right at the coast of
@@ -192,7 +203,7 @@
                                 regelialia. It is a paradisematic country, in which roasted parts of sentences fly into
                                 your mouth.</p>
                         </div>
-                        <div class="tab-pane fade" id="pills-profile-icon" role="tabpanel"
+                        <div class="tab-pane fade" id="pills-profile-icon-three" role="tabpanel"
                             aria-labelledby="pills-profile-tab-icon">
                             <p>Even the all-powerful Pointing has no control about the blind texts it is an almost
                                 unorthographic life One day however a small line of blind text by the name of Lorem
@@ -202,7 +213,7 @@
                                 her seven versalia, put her initial into the belt and made herself on the way.
                             </p>
                         </div>
-                        <div class="tab-pane fade" id="pills-contact-icon" role="tabpanel"
+                        <div class="tab-pane fade" id="pills-contact-icon-three" role="tabpanel"
                             aria-labelledby="pills-contact-tab-icon">
                             <p>Pityful a rethoric question ran over her cheek, then she continued her way. On her way
                                 she met a copy. The copy warned the Little Blind Text, that where it came from it would
@@ -219,6 +230,7 @@
 
             </div>
         </div>
+        <!-- Definicion alcances del proyecto -->
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">

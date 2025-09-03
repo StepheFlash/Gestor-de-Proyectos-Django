@@ -35,15 +35,20 @@ Functions:
 """
 from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render, redirect
+from django.template.loader import render_to_string
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
-from .forms import TaskForm, CreateNewProject
-from .models import Project, Task, Integrantes
+# from .forms import TaskForm, CreateNewProject
+from .models import Project, Task, Studentuser, Metting, Stage, Activity, Document
 from django.utils import timezone
+from datetime import datetime
 import json
+from django.urls import reverse
+
+
 
 # Create your views here.
 
@@ -69,7 +74,7 @@ def registro(request):
                     password=request.POST['password1']
                 )
                 user.save()
-                integrante = Integrantes.objects.create(
+                integrante = Studentuser.objects.create(
                     user=user,
                     project_id=None,
                     cedula=request.POST['cedula'],
@@ -144,16 +149,9 @@ def about(request):
 
 @login_required
 def projects(request):
-    title = 'Proyectos'
-    data_user = user_data(request)
-    return render(request, 'projects/projectos.html', {'title': title, 'data_user': data_user})
-
-
-@login_required
-def projects(request):
     # projects = list(Proyect.objects.values())
     projects = Project.objects.all()
-    integrantes = Integrantes.objects.select_related('user').all()
+    integrantes = Studentuser.objects.select_related('user').all()
     # return JsonResponse(projects, safe=False)
     data_user = user_data(request)
     return render(request, 'projects/projects.html', {'projects': projects, 'data_user': data_user, 'integrantes': integrantes})
@@ -162,35 +160,54 @@ def projects(request):
 @login_required
 def create_project(request):
     if request.method == 'GET':
-        return render(request, 'projects/projects.html', {'form': CreateNewProject()})
+        return render(request, 'projects/create_project.html')
     else:
         try:
             Project.objects.create(
-                name=request.POST["name"],
-                horario_reunion=request.POST["horario_reunion"],
-                tema_investigacion=request.POST["tema_investigacion"]
+                name=request.POST.get("name", "").strip(),
+                horario_reunion=request.POST.get(
+                    "horario_reunion", "").strip(),
+                tema_investigacion=request.POST.get(
+                    "tema_investigacion", "").strip()
             )
             return redirect('projects')
-        except ValueError:
-            print("Por favor intrduzca datos validos")
+        except Exception as e:
+            return render(request, 'projects/projects.html', {
+                'error': 'Por favor introduzca datos válidos',
+                'exception': str(e)
+            })
+
+
+@login_required
+def create_document_project(request):
+    if request.method == 'GET':
+        return render(request, 'projects/documents/document_add.html')
+    else:
+        project_id = request.POST.get("id_project_doc")
+        Document.objects.create(
+            project_id=project_id,
+            title_doc=request.POST.get("title_doc"),
+            content_doc=request.POST.get("content_doc"),
+            date_uploaded=request.POST.get("date_uploaded"),
+            upload_path=request.POST.get("upload_path")
+
+        )
+        return redirect('project_info', id=project_id)
 
 
 @login_required
 def assing_members_project(request):
-    integrantes = Integrantes.objects.select_related('user').all()
+    integrantes = Studentuser.objects.select_related('user').all()
     if request.method == 'GET':
         return render(request, 'projects/project_members.html', {'integrantes': integrantes})
     elif request.method == 'POST':
         integrante_id = request.POST.get('integranteSelect')
         project_id = request.POST.get('project_id')
 
-        print("project_id",project_id)
-        print("Integrantes_id",integrante_id)
-
         if not integrante_id or not project_id:
             return HttpResponseBadRequest("Faltan datos.")
-        
-        integrante = get_object_or_404(Integrantes, pk=integrante_id)
+
+        integrante = get_object_or_404(Studentuser, pk=integrante_id)
         integrante.project_id = project_id
         integrante.save()
 
@@ -202,8 +219,8 @@ def assing_members_project(request):
 @login_required
 def integrante_ajax_detalle(request):
     integrante_id = request.GET.get('integrante_id')
-    print("integrante_id",integrante_id)
-    integrante = get_object_or_404(Integrantes, id=integrante_id)
+    # print("integrante_id",integrante_id)
+    integrante = get_object_or_404(Studentuser, id=integrante_id)
 
     data = {
         'cedula': integrante.cedula,
@@ -215,9 +232,20 @@ def integrante_ajax_detalle(request):
 
 @login_required
 def project_info(request, id):
-    id = 1
     project = get_object_or_404(Project, pk=id)
-    return render(request, 'projects/info_proyect', {'project': project})
+    integrantes = Studentuser.objects.select_related(
+        'user').filter(project_id=id)
+    stages = Stage.objects.all()
+    activities = Activity.objects.all()
+    documents = Document.objects.filter(project_id=id)
+    return render(request, 'projects/project_info.html',
+                  {
+                      'project': project,
+                      'integrantes': integrantes,
+                      'stages': stages,
+                      'activities': activities,
+                      'documents': documents
+                  })
 
 
 @login_required
@@ -226,12 +254,38 @@ def approach_project(request):
 
 
 @login_required
-def tasks(request):
-    # task = get_object_or_404(Task, id=id)
-    # return HttpResponse('Tarea: %s' % task.title)
-    TaskCompleted = "Tareas Pendientes"
-    tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
-    return render(request, 'tasks/tasks.html', {'tasks': tasks, 'TaskCompleted': TaskCompleted})
+def activities(request):
+    activity_planteamiento = Activity.objects.filter(etapa_id=1)
+    activity_planificacion = Activity.objects.filter(etapa_id=2)
+    #activity_ejecucion = Activity.objects.filter(etapa_id=3)
+    #activity_desarrollo = Activity.objects.filter(etapa_id=4)
+
+    return render(request, 'tasks/activities/activities.html', {
+        'activity_planteamiento': activity_planteamiento,
+        'activity_planificacion': activity_planificacion,
+        #'activity_ejecucion': activity_ejecucion,
+        #'activity_desarrollo': activity_desarrollo
+    })
+
+
+@login_required
+def project_activities_tasks(request, id, id_activity):
+    project = get_object_or_404(Project, pk=id)
+    activity = get_object_or_404(Activity, pk=id_activity)
+    tasks = Task.objects.filter(activity_id=id_activity, project_id=id)
+    documents = Document.objects.filter(project_id=id)
+    if request.method == 'GET':
+        return render(request, 'tasks/activities/activities_view.html', {
+            'project': project,
+            'activity': activity,
+            'tasks': tasks,
+            'documents': documents
+        })
+
+
+@login_required
+def tasks_detail(request):
+    print("listar tareas")
 
 
 @login_required
@@ -243,36 +297,33 @@ def tasks_completed(request):
 
 
 @login_required
-def create_task(request):
-    projects = Project.objects.all()
+def create_task_project(request):
+
     if request.method == 'GET':
-        return render(request, 'tasks/create_task.html', {'projects': projects})
+        return render(request, 'tasks/create_task.html')
+
     else:
-        try:
-            project_instance = get_object_or_404(
-                Project, id=request.POST['project'])
-            Task.objects.create(
-                title=request.POST['title'], description=request.POST['description'], project=project_instance,
-                important=bool(request.POST.get('important')),
-                user=request.user
-            )
-            # form = TaskForm(request.POST)
-            # new_task = form.save(commit=False)
-            # new_task.user = request.user
-            # new_task.save()
-            return redirect('tasks')
-        except ValueError:
-            return render(request, 'tasks/create_task.html', {
-                'form': TaskForm(),
-                'projects': projects,
-                'error': 'Por favor intrduzca datoas validos'
-            })
+        project_data_id = request.POST.get("id_project")
+        activity_data_id = request.POST.get("id_activity")
+
+        Task.objects.create(
+            project_id=project_data_id,
+            activity_id=activity_data_id,
+            title=request.POST.get("title"),
+            description=request.POST.get("description"),
+            document_id=request.POST.get("documentSelect", ""),
+            important=bool(request.POST.get("important"))
+
+        )
+        return redirect('project_activities_tasks', project_data_id, activity_data_id)
 
 
 @login_required
+# Pendiente editarlo
 def project_edit(request, id):
     project = get_object_or_404(Project, pk=id)
-    integrantes = Integrantes.objects.filter(project=project)
+    integrantes = Studentuser.objects.select_related(
+        'user').filter(project=project)
     if request.method == 'GET':
         return render(request, 'projects/project_edit.html', {
             'project': project,
@@ -286,13 +337,16 @@ def project_edit(request, id):
             project.save()
 
             for integrante in integrantes:
-                integrante.name = request.POST.get(
-                    f'integrante_name_{integrante.id}')
+                integrante.user.first_name = request.POST.get(
+                    f'integrante_first_name_{integrante.id}')
+                integrante.user.last_name = request.POST.get(
+                    f'integrante_last_name_{integrante.id}')
                 integrante.cedula = request.POST.get(f'cedula_{integrante.id}')
                 integrante.student_code = request.POST.get(
                     f'student_code_{integrante.id}')
-                integrante.institutional_mail = request.POST.get(
+                integrante.user.email = request.POST.get(
                     f'institutional_mail_{integrante.id}')
+                integrante.user.save()
                 integrante.save()
             return redirect('projects')
 
@@ -305,56 +359,103 @@ def project_edit(request, id):
 
 
 @login_required
+def project_document_edit(request, id_document):
+    document = get_object_or_404(Document, pk=id_document)
+    if request.method == 'GET':
+        return render(request, 'projects/documents/document_edit.html', {
+            'document': document
+        })
+
+    else:
+        project_id = document.project_id
+
+        document.title_doc = request.POST.get("title_doc")
+        document.content_doc = request.POST.get("content_doc")
+        document.date_uploaded = request.POST.get("date_uploaded")
+        document.upload_path = request.POST.get("upload_path")
+        document.save()
+
+        return redirect('project_info', id=project_id)
+
+
+""" Funcion para agregar una retroalimentacion a la tarea del proyecto """
+
+
+@login_required
+def task_feedback(request, id_task):
+    task = get_object_or_404(Task, pk=id_task)
+
+    if request.method == "GET":
+        return render(request, 'tasks/task_feedback.html', {
+            'task': task
+        })
+    else:
+        id_project = task.project_id
+        id_activity = task.activity_id
+
+        task.feedback = request.POST.get("feedback")
+        task.save()
+
+        return redirect('project_activities_tasks', id_project, id_activity)
+
+
+@login_required
+def task_edit(request, id_task):
+        documents = Document.objects.all()
+        task = get_object_or_404(Task, pk=id_task)
+        if request.method == "GET":
+            return render(request, 'tasks/task_edit.html', {
+                'task': task,
+                'documents': documents
+            })
+        else:
+            task.title = request.POST.get("title")
+            task.description = request.POST.get("description")
+            new_status = request.POST.get('statusSelect')
+            if new_status == 'Completado':
+                task.date_completed = timezone.now()
+            else:
+                task.date_completed = None
+            task.status = new_status
+            task.document_id = request.POST.get("documentSelect")
+            task.important = bool(request.POST.get("important"))
+
+            task.save()
+            
+            return redirect('project_activities_tasks', task.project_id, task.activity_id)
+        
+
+@login_required
 def project_detail(request, id):
     project = get_object_or_404(Project, pk=id)
-    integrantes = integrantes = Integrantes.objects.select_related('user').filter(project=project)
+    integrantes = Studentuser.objects.select_related(
+        'user').filter(project=project)
     return render(request, 'projects/project_detail.html', {
         'project': project,
         'integrantes': integrantes
     })
 
+
 @login_required
+def project_document_detail(request, id_document):
+    document = get_object_or_404(Document, pk=id_document)
+    return render(request, 'projects/documents/document_detail.html', {
+        'document': document
+    })
+
 
 @login_required
 def task_detail(request, task_id):
-    if request.method == 'GET':
-        task = get_object_or_404(Task, pk=task_id, user=request.user)
-        form = TaskForm(instance=task)
-        return render(request, 'tasks/task_detail.html', {'task': task, 'form': form})
-    else:
-        try:
-            task = get_object_or_404(Task, pk=task_id, user=request.user)
-            form = TaskForm(request.POST, instance=task)
-            form.save()
-            return redirect('tasks')
-        except ValueError:
-            return render(request, 'tasks/task_detail.html', {
-                'task': task,
-                'form': form,
-                'error': 'Error al actualizar tarea'})
-
+    task = get_object_or_404(Task, pk=task_id)
+    return render(request, 'tasks/task_detail.html',{'task':task})
 
 @login_required
 def complete_task(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
-    if request.method == 'POST':
-        task.datecompleted = timezone.now()
-        task.save()
-        return redirect('tasks')
+    task_id = 1
+    print("Funcion para marcar una tarea como completa")
 
 
 @login_required
 def delete_task(request, task_id):
-    task = get_object_or_404(Task, pk=task_id, user=request.user)
-    if request.method == 'POST':
-        task.delete()
-        return redirect('tasks')
-
-
-# def create_task(request):
-#     if (request.method == 'GET'):
-#         return render(request, 'tasks/create_task.html', {'form': CreateNewTask()})
-#     else:
-#         Task.objects.create(
-#             title=request.POST['title'], description=request.POST['description'], project_id=2)
-#         return redirect('tasks')
+    task_id = 1
+    print("Funcion para eliminar tareas")

@@ -1,0 +1,64 @@
+{% block content %}
+
+<!-- Modal Edit Document-->
+
+<div class="modal fade" id="ModalEditDocument" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Editar</span>
+                    <span class="fw-light">
+                        Documento
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body-edit-document">
+                <p class="small">Formulario para editar documentos del proyecto</p>
+                <!-- Aqui se insertara el formulario por medio de HXML -->
+            </div>
+        </div>
+    </div>
+</div>
+{% if document %}
+<!-- Formulario del modal -->
+<form method="POST" id="editDocumentForm" action="{% url 'project_document_edit' document.id %}" hx-target="#modal-body-edit-document" hx-swap="outerHTML">
+    {{error}}
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group form-group-default">
+                <label>Titulo del Documento</label>
+                <input id="title_doc" name="title_doc" type="text" class="form-control" value="{{document.title_doc}}">
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group form-group-default">
+                <label>Descripcion del documento</label>
+                <textarea id="content_doc" name="content_doc" class="form-control" aria-label="Descripcion del Documento"
+                    rows="3">{{document.content_doc}}</textarea>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group form-group-default">
+                <label>Fecha de Creacion</label>
+                <input id="date_uploaded" name="date_uploaded" type="date" class="form-control" value="{{ document.date_uploaded|date:'Y-m-d' }}">
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group form-group-default">
+                <label>Link del Documento</label>
+                <input id="upload_path" name="upload_path" type="text" class="form-control" value="{{document.upload_path}}">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-warning">Modificar</button>
+    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+</form>
+{% endif %}
+
+{% endblock %}

@@ -1,7 +1,7 @@
 {% block content %}
 
 <!-- Form Members Proyect -->
-<div class="modal fade" id="addRowModalMembers" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="addModalProjectMembers" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -59,8 +59,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" id="addRowButtonMembers" class="btn btn-success"
-                        id="alert_demo_1_1">Agregar</button>
+                    <button type="submit" class="btn btn-success">Agregar</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </form>
             </div>
@@ -69,11 +68,10 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
     $('#integranteSelect').on('change', function(){
         let integranteId = $(this).val()
-        console.log(integranteId)
         if(integranteId){
             $.ajax({
                 url: '/integrantes/ajax-detalle/',
