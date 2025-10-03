@@ -1,0 +1,72 @@
+ {% block content %}
+
+<!-- Modal Infrimaacion del Evento -->
+<div class="modal fade" id="infoEventCalendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h4 class="modal-title">
+                    <span class="fw-mediumbold">Informacion del Evento</span>
+                    <span class="fw-light">Evento</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addEventCalendarForm">
+                    {{error}}
+                    {% csrf_token %}
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="title">Titulo evento</label>
+                            <p class="form-control">{{meeting.title}}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="agenda">Descripción evento</label>
+                            <p class="form-control">{{meeting.agenda}}</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="agenda">Notas del evento</label>
+                            <p class="form-control">{{meeting.notes}}</p>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-left: 0px; margin-right: 0px;">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Fecha de Inicio</label>
+                                <p class="form-control">{{meeting.meeting_start}}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label>Fecha de Fin</label>
+                                <p class="form-control">{{meeting.meeting_end}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="meeting_link">Link de la reunion</label>
+                           <a href="{{meeting.meeting_link}}" type="button" class="btn btn-default" target="_blank">
+                                <span><i class="fa fa-link"></i>
+                                    Link Documento
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer no-bd">
+                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

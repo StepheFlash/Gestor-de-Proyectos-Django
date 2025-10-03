@@ -1,0 +1,96 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+  integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<div class="card card-documentation">
+  <div class="card-header bg-info-gradient text-white bubble-shadow">
+    <div class="page-inner py-5">
+      <h4 class="text-center display-4">Agenda de Proyetos</h4>
+      <p class="mb-0 op-8 text-center">
+        Agenda para las gestion de reuniones de los diferentes proyectos.
+      </p>
+    </div>
+  </div>
+</div>
+<div class="page-inner">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex align-items-center">
+            <h5 class="card-title">Aagenda de los Proyectos</h5>
+            <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addEventCalendarModal"
+              data-idstage="1">
+              <i class="fa fa-plus"></i>
+              Agregar Evento
+            </button>
+          </div>
+        </div>
+        <div class="card-body">
+          <!-- Modal Create Event Calendar -->
+          {% include "mappings/calendar_create_event.html" %}
+          <div id='calendar'></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialDate: '{{fecha_actual}}',
+      initialView: 'dayGridMonth',
+      nowIndicator: true,
+      locale: 'es',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+      navLinks: true, // can click day/week names to navigate views
+      editable: true,
+      selectable: true,
+      selectMirror: true,
+      dayMaxEvents: true, // allow "more" link when too many events
+      events: {
+        url: '{% url "calendar_event_json" %}'// URL de tu vista de Django para obtener arreglo de los eventos
+      }
+    });
+    calendar.render();
+
+
+    // Este código debe ejecutarse cuando se envíe el formulario del modal
+    $('#addEventCalendarForm').on('submit', function (event) {
+      event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+      let formData = $(this).serialize(); // Captura los datos del formulario
+
+      $.ajax({
+        url: '{% url "calendar_create_event" %}', // URL de tu vista de Django para crear el evento
+        type: 'POST',
+        data: formData,
+        success: function (response) {
+          // Cierra el modal después de una respuesta exitosa
+          $('#addEventCalendarModal').modal('hide');
+
+          // Le dice a FullCalendar que vuelva a obtener los eventos de la URL
+          calendar.refetchEvents();
+          swal("¡Éxito!", response.message, "success");
+        },
+        error: function (error) {
+          swal("Ocurrió un error al editar el evento:", error);
+        }
+      });
+    });
+
+
+  });
+
+</script>
+
+{% endblock %}

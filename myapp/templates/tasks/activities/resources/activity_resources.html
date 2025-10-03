@@ -1,0 +1,130 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Actividad</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'index' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'activities' %}">Actividades</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Información de la actividad</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Actividad: {{activity.title}}</div>
+                    <div class="card-category">Listado de tarea para esta actividad</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{activity.description}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h5 class="card-title">Listado Recursos Multimedia</h5>
+                    <button class="btn btn-primary btn-round ml-auto" data-toggle="modal"
+                        data-target="#resourcesActivityModal" data-idproject="{{project.id}}"
+                        data-idactivity="{{activity.id}}">
+                        <i class="fa fa-plus"></i>
+                        Agregar Recursos
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Modal Add resources-->
+                {% include "tasks/activities/resources/resource_add.html" %}
+                <!-- Modal detail resources-->
+                <div class="modal fade" id="ModalDetailResourseMultimedia" tabindex="-1" role="dialog"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header no-bd">
+                                <h5 class="modal-title">
+                                    <span class="fw-mediumbold">
+                                        Detalles</span>
+                                    <span class="fw-light">
+                                        Documento
+                                    </span>
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="modal-body-detail-resource">
+                                <p class="small">Vista detalles del recurso multimedia</p>
+                            </div>
+                            <div class="modal-footer no-bd">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal edit resources-->
+                <div class="modal fade" id="resourcesActivityModalEdit" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document" id="dialog-add-activity" hx-target="this">
+                        <div class="modal-content">
+                            <div class="modal-header no-bd">
+                                <h4 class="modal-title">
+                                    <span class="fw-mediumbold">Actualizar</span>
+                                    <span class="fw-light">Contenido Multimedia</span>
+                                </h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body" id="modal-body-resource-edit">
+                                <p class="small">Formulario para agregar contenido multimedia a las actividades</p>
+
+                            </div>
+                            <div class="modal-footer no-bd">
+                                <!-- <button type="button" id="addRowButton" class="btn btn-primary">Add</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Table -->
+                <div id="resources-container" data-activity-id="{{ activity.id }}"></div>
+                <div class="table-responsive">
+                    <table id="multimedia-table" class="display table table-striped table-hover" cellspacing="0"
+                        width="100%">
+                        <thead>
+                            <tr>
+                                <td>Nro.</td>
+                                <td>Titulo</td>
+                                <td>Link Contenido</td>
+                                <td>Acciones</td>
+                            </tr>
+                        </thead>
+                        <!-- Cuerpo de la tabla creando por ajax en el archivo datatables.js -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

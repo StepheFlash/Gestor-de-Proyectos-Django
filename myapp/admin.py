@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Project,Stage,Activity,Document,Task, Studentuser
+from .models import Project,Stage,Activity,Document,Task, Studentuser, Multimedia, Meeting
 
 
 # Register your models here.
@@ -14,5 +14,8 @@ admin.site.register(Task, TaskProjectAdmin)
 admin.site.register(Stage)
 admin.site.register(Activity)
 admin.site.register(Document)
+admin.site.register(Multimedia)
+admin.site.register(Meeting)
+
 
 

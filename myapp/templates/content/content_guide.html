@@ -1,0 +1,74 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<div class="card card-documentation">
+    <div class="card-header bg-info-gradient text-white bubble-shadow">
+        <div class="page-inner py-5">
+            <h4 class="text-center display-4">{{stage.title}}</h4>
+            <p class="mb-0 op-8 text-center">
+                Guía paso a paso para desarrollar la {{stage.title}}
+            </p>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        {% for activity in activities %}
+       <!-- Definicion contexto del proyecto -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">{{forloop.counter}}. {{activity.title}}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content mt-2 mb-3" id="pills-with-icon-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home-icon-uno" role="tabpanel"
+                            aria-labelledby="pills-home-tab-icon">
+
+                            <p>{{activity.description}}</p>
+
+                            <a href="{% url 'content_guide_detail' activity.id %}" >
+                                <button class="btn btn-info">
+                                    <span class="btn-label"><i class="fa fa-info"></i></span>
+                                    Mas informacion.
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% endfor %}
+    </div>
+</div>
+<!-- <div class="container-fluid">
+     start event block    <div class="row align-items-center event-block no-gutters margin-40px-bottom">
+        <div class="col-lg-5 col-sm-12">
+            <div class="position-relative">
+                Colocara imagen con una resolucion 450x280
+                <img src="https://main-solution.net/wp-content/uploads/2025/07/innovacion-2.jpg" alt="">
+            </div>
+        </div>
+        <div class="col-lg-7 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{activity.title}}</h5>   
+                    <div class="padding-60px-lr md-padding-50px-lr sm-padding-30px-all xs-padding-25px-all">
+                        <p>{{activity.description}}</p>
+                        <a class="butn small margin-10px-top md-no-margin-top" href="event-details.html">Read More <i
+                                class="fas fa-long-arrow-alt-right margin-10px-left"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    end event block
+</div> -->
+
+{% endblock %}

@@ -12,59 +12,73 @@
         </div>
     </div>
 </div>
-
 <div class="page-inner">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Listado Actividades Planteamiento del Proyecto</h5>
-                    <div class="table-responsive">
-                        <table id="add-row" class="display table table-striped table-hover" cellspacing="0"
-                            width="100%">
-                            <thead>
-                                <tr>
-                                    <td>Nro</td>
-                                    <td>Actividad</td>
-                                    <td>Etapa</td>
-                                    <td style="width: 10%;">acciones</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for planteamiento in activity_planteamiento %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ planteamiento.title }}</td>
-                                    <td>{{ planteamiento.etapa.title }}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-info dropdown-toggle"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Action
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" data-toggle="modal" data-target="#addTaskModal"
-                                                    href="#">Crear Tarea</a>
-                                                <a class="dropdown-item" href="#">Modificar Actividad</a>
-                                                <a class="dropdown-item" href="#">Eliminar Actividad</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <div class="card-header">
+                    <div class="d-flex align-items-center">
+                        <h5 class="card-title">Listado Actividades de los Proyectos</h5>
+                        <button class="btn btn-primary btn-round ml-auto" data-toggle="modal"
+                            data-target="#addActivityModal" data-idstage="1">
+                            <i class="fa fa-plus"></i>
+                            Agregar Actividad
+                        </button>
                     </div>
                 </div>
-            </div>
-        </div>
-               <div class="col-md-12">
-            <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Listado Actividades Planificación del Proyecto</h5>
+                    <!-- Modal Create Activity -->
+                    {% include "tasks/activities/activity_create.html" %}
+                    <!-- Modal Edit Activity -->
+                    <div class="modal fade" id="editActivityModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document" id="dialog-add-activity" hx-target="this">
+                            <div class="modal-content">
+                                <div class="modal-header no-bd">
+                                    <h4 class="modal-title">
+                                        <span class="fw-mediumbold">Editar</span>
+                                        <span class="fw-light">Actividad</span>
+                                    </h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" id="modal-body-activity-edit">
+
+                                </div>
+                                <div class="modal-footer no-bd">
+                                    <!-- <button type="button" id="addRowButton" class="btn btn-primary">Add</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal delete Activity -->
+                    <div class="modal fade" id="deleteActivityModal" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document" id="dialog-add-activity" hx-target="this">
+                            <div class="modal-content">
+                                <div class="modal-header no-bd">
+                                    <h4 class="modal-title">
+                                        <span class="fw-mediumbold">Eliminar</span>
+                                        <span class="fw-light">Actividad</span>
+                                    </h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" id="modal-body-activity-delete">
+
+                                </div>
+                                <div class="modal-footer no-bd">
+                                    <!-- <button type="button" id="addRowButton" class="btn btn-primary">Add</button> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal resources Activity -->
+        
                     <div class="table-responsive">
-                        <table id="add-row" class="display table table-striped table-hover" cellspacing="0"
-                            width="100%">
+                        <table id="add-activity" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
                                     <td>Nro</td>
@@ -73,29 +87,15 @@
                                     <td style="width: 10%;">acciones</td>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {% for planificacion in activity_planificacion %}
+                            <tfoot>
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ planificacion.title }}</td>
-                                    <td>{{ planificacion.etapa.title }}</td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button type="button" class="btn btn-info dropdown-toggle"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Action
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" data-toggle="modal" data-target="#addTaskModal"
-                                                    href="#">Crear Tarea</a>
-                                                <a class="dropdown-item" href="#">Modificar Tarea</a>
-                                                <a class="dropdown-item" href="#">Eliminar Tareas</a>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td>Nro</td>
+                                    <td>Actividad</td>
+                                    <td>Etapa</td>
+                                    <td style="width: 10%;">acciones</td>
                                 </tr>
-                                {% endfor %}
-                            </tbody>
+                            </tfoot>
+                            <!-- Cuerpo de la tabla contruida por ajax en datatables.js -->
                         </table>
                     </div>
                 </div>
@@ -103,6 +103,5 @@
         </div>
     </div>
 </div>
-
 
 {% endblock %}

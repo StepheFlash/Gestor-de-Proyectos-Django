@@ -1,0 +1,55 @@
+{% extends 'layouts/principalMenu.html' %}
+
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Actividad</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'index' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Actividades</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="#">Información de la actividad</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Actividad: {{activity.title}}</div>
+                    <div class="card-category">Recursos multimedia de esta actividad</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">A continuación, se podrán visualizar una serie de recursos que servirán como guía para el desarrollo de cada una de las actividades del proyecto que se deben desarrollar dentro del grupo de investigación.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% for resource in resources_multimedia %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">{{resource.title_content}}</h5>
+                </div>
+                <iframe src="{{resource.link_content}}" width="940" height="640" frameborder="0" scrolling="no" allowfullscreen title="Planteamiento de un proyecto de software"></iframe>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% block content %}
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Proyecto</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'index' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'projects' %}">Proyectos</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'project_info' project.id %}">Informacion proyecto</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'project_activities_tasks' project.id activity.id %}">Tareas</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Actividad: {{activity.title}}</div>
+                    <div class="card-category">Listado de tarea para esta actividad</div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{activity.description}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex align-items-center">
+                    <h5 class="card-title">Listado de tareas</h5>
+                    <button class="btn btn-primary btn-round ml-auto" data-toggle="modal" data-target="#addTaskModal"
+                        data-idproject="{{project.id}}" data-idactivity="{{activity.id}}">
+                        <i class="fa fa-plus"></i>
+                        Agregar Tarea
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Modal Add Taks-->
+                {% include "tasks/create_task.html" %}
+
+                <!-- Modal Feedback Taks-->
+                {% include "tasks/task_feedback.html" %}
+
+                <!-- Modal Edit Taks-->
+                {% include "tasks/task_edit.html" %}
+
+                <!-- Modal Detail Taks-->
+                {% include "tasks/task_detail.html" %}
+                <!-- Table -->
+                <div class="table-responsive">
+                    <table id="tasks-table" class="display table table-striped table-hover" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <td>id</td>
+                                <td>Tarea</td>
+                                <td>Fecha Creacion</td>
+                                <td>Fecha completado</td>
+                                <th>Estado</th>
+                                <td>acciones</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for task in tasks %}
+                            <tr id="task-{{ task.id }}">
+                                <td>{{ forloop.counter }}</td>
+                                <td id="task-title">{{ task.title }}</td>
+                                <td id="task-created">{{task.date_created|date:'M j Y'}}</td>
+                                <td id="task-completed">{{ task.date_completed|date:'M j Y'}}</td>
+                                <td class="status">
+                                    <div class="btn-group">
+                                        <button type="button"
+                                            class="btn {% if task.status == 'Pendiente' %}btn-warning{% elif task.status == 'En proceso' %}btn-primary{% elif task.status == 'Completado' %}btn-success{% endif %}">
+                                            {{ task.status }}
+                                        </button>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-info dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a href="" class="dropdown-item" data-toggle="modal"
+                                                data-target="#ModalFeedbackTask"
+                                                hx-get="{% url 'task_feedback' id_task=task.id %}"
+                                                hx-target="#modal-body-task-feedback" hx-trigger="click">
+                                                Retroalimentación
+                                            </a>
+                                            <a href="" class="dropdown-item" data-toggle="modal"
+                                                data-target="#ModalEditTask"
+                                                hx-get="{% url 'task_edit' id_task=task.id %}"
+                                                hx-target="#modal-body-task-edit" hx-trigger="click">Modificar Tarea
+                                            </a>
+                                            <a href="" class="dropdown-item" data-toggle="modal"
+                                                data-target="#ModalDetailTask"
+                                                hx-get="{% url 'task_detail' task.id %}"
+                                                hx-target="#modal-body-task-detail" hx-trigger="click">Detalles Tarea
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal View Activity-->
+<div class="modal fade" id="modalActivityView" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">
+                        Actividad:</span>
+                    <span class="fw-light" id="activity_title">
+                    </span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="small">Tareas creadas para esta actividad</p>
+            </div>
+            <div class="modal-footer no-bd">
+                <button type="button" id="addViewActivityButton" class="btn btn-primary">Add</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

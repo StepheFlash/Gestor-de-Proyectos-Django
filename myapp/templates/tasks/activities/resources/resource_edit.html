@@ -1,0 +1,37 @@
+{% block content %}
+
+<!-- Formulario para editar recursos multimedia -->
+
+{% if resource %}
+<form method="POST" action="{% url 'activity_resources_edit' resource.id %}" id="EditResourceForm">
+    {{error}}
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group form-group-default">
+                <label>Titulo</label>
+                <input id="title_content" name="title_content" type="text" class="form-control"
+                    value="{{resource.title_content}}">
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group form-group-default">
+                <label>Descripcion</label>
+                <textarea id="description" name="description" type="text" class="form-control"
+                aria-label="Descripcion del Documento" rows="3">{{resource.description}}</textarea>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-group form-group-default">
+                <label>Link del contenido multimedia</label>
+                <input id="link_content" name="link_content" type="text" class="form-control"
+                    value="{{resource.link_content}}">
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Actualizar</button>
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+</form>
+
+{% endif %}
+{% endblock %}

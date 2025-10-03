@@ -30,57 +30,60 @@
 <!-- Tabla del modal -->
 <div class="row">
     <div class="col-md-12">
-        <table hx-target="modal-body-detail-document" hx-swap="outerHTML" style="width: 760px;">
-            <tbody>
-                <tr>
-                    <td>
-                        <div class="col-md-12">
-                            <div class="form-group form-group-default">
-                                <label>Titulo del Documento</label>
-                                <p>{{document.title_doc}}</p>
+        <div class="table-responsive">
+            <table hx-target="modal-body-detail-document" hx-swap="outerHTML">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="col-md-12">
+                                <div class="form-group form-group-default">
+                                    <label>Titulo del Documento</label>
+                                    <p>{{document.title_doc}}</p>
+                                </div>
                             </div>
-                        </div>
 
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="col-md-12">
-                            <div class="form-group form-group-default">
-                                <label>Descripcion del documento</label>
-                                <p>{{document.content_doc}}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-md-12">
+                                <div class="form-group form-group-default">
+                                    <label>Descripcion del documento</label>
+                                    <p>{{document.content_doc}}</p>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="col-md-12">
-                            <div class="form-group form-group-default">
-                                <label>Fecha de Creacion</label>
-                                <a>{{ document.date_uploaded|date:'Y-m-d' }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-md-12">
+                                <div class="form-group form-group-default">
+                                    <label>Fecha de Creacion</label>
+                                    <a>{{ document.date_uploaded|date:'Y-m-d' }}</a>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="col-md-12">
-                            <div class="form-group form-group-default">
-                                <a href="{{document.upload_path}}" type="button" class="btn btn-default"
-                                    target="_blank">
-                                    <span>
-                                        <i class="fa fa-link">
-                                        </i>
-                                        Link Documento
-                                    </span>
-                                </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="col-md-12">
+                                <div class="form-group form-group-default">
+                                    <a href="{{document.upload_path}}" type="button" class="btn btn-default"
+                                        target="_blank">
+                                        <span>
+                                            <i class="fa fa-link">
+                                            </i>
+                                            Link Documento
+                                        </span>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 

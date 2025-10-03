@@ -23,12 +23,17 @@ class Studentuser(models.Model):
     def __str__(self):
         return f"{self.user.get_full_name()}({self.cedula})"
     
-class Metting(models.Model):
+class Meeting(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    meeting_date = models.DateTimeField(null=True,blank=True)
+    title = models.CharField(max_length=200,blank=True)
+    meeting_start = models.DateTimeField()
+    meeting_end = models.DateTimeField()
     agenda = models.TextField(blank=True)
     notes = models.TextField(blank=True)
     meeting_link = models.TextField(blank=True,null=True)
+
+    def __str__(self):
+        return f"{self.title} (Proyecto: {self.project.name})"
 
 class Document(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE,null=True)
@@ -40,7 +45,7 @@ class Document(models.Model):
     
 
     def __str__(self):
-         return f"{self.title_doc} (Proyecto: {self.project.name})"
+        return f"{self.title_doc} (Proyecto: {self.project.name})"
 
 #Tabla estapas(plantilla)
 class Stage(models.Model):
@@ -79,3 +84,14 @@ class Task(models.Model):
     # //Funcion para cambiar el titulo de las listas desde el admin
     def __str__(self):
         return f"{self.title} (Proyecto: {self.project.name})"
+
+
+class Multimedia(models.Model):
+    title_content = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    link_content = models.URLField(blank=True)
+    activity = models.ForeignKey(Activity,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.title_content} (Actividad: {self.activity.title})"
+

@@ -39,7 +39,30 @@
                     {% include "projects/create_project.html" %}
 
                     <!-- Modal Editar Proyectos -->
-                    {% include "projects/project_edit.html" %}
+                    <div class="modal fade" id="addRowModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        <span class="fw-mediumbold">
+                                            Editar</span>
+                                        <span class="fw-light">
+                                            Proyecto
+                                        </span>
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" id="modal-body-project-edit">
+                                    <p class="small">Formulario para agregar nuevos proyectos...</p>
+
+                                </div>
+                                <div class="modal-footer no-bd">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Modal para ver los detalles del Proyectos -->
                     {% include "projects/project_detail.html" %}
@@ -48,10 +71,10 @@
                     {% include "projects/project_members.html" %}
 
                     <div class="table-responsive">
-                        <table id="add-row" class="display table table-striped table-hover">
+                        <table id="add-row-project" class="display table table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th>ID Proyectos</th>
+                                    <th>ID</th>
                                     <th>Titulo Proyectos</th>
                                     <th>Tema Investigación</th>
                                     <th>Horario reuniones</th>
@@ -59,58 +82,7 @@
                                     <th>Acción</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {% for project in projects %}
-                                <tr>
-                                    <td>{{project.id}}</td>
-                                    <td><a href="" type="button" data-toggle="modal" data-target="#addRowModalDetail"
-                                            hx-get="{% url 'project_detail' id=project.id %}"
-                                            hx-target="#modal-body-content-detail"
-                                            hx-trigger="click">{{project.name}}</a></td>
-                                    <td>{{project.tema_investigacion}}</td>
-                                    <td>{{project.horario_reunion}}</td>
-                                    <td>
-                                        {% for integrante in integrantes %}
-                                        {% if project.id == integrante.project_id %}
-                                        {{integrante.user.first_name }} {{integrante.user.last_name}}{% if not forloop.last %}
-                                        ... {% endif %}
-                                        {% endif %}
-                                        {% endfor %}
-                                    </td>
-                                    <td> {% if user.is_superuser %}
-                                        <div class="form-button-action">
-                                            <button type="button" title="Edit Project"
-                                                class="btn btn-link btn-primary btn-lg "
-                                                data-original-title="Edit Project" data-toggle="modal"
-                                                data-target="#addRowModalEdit"
-                                                hx-get="{% url 'project_edit' id=project.id %}"
-                                                hx-target="#modal-body-content-edit" hx-trigger="click">
-                                                <i class="fa fa-edit"></i>
-                                            </button>
-                                            <button type="button" data-toggle="modal"
-                                                data-target="#addModalProjectMembers" title="Add Student"
-                                                class="btn btn-link btn-primary btn-lg"
-                                                data-original-title="Add Student" data-id="{{ project.id }}"
-                                                data-name="{{ project.name }}">
-                                                <i class="fas fa-user-friends"></i>
-                                            </button>
-                                            <a type="button" data-toggle="tooltip" title=""
-                                                class="btn btn-link btn-primary btn-lg" data-original-title="Ver"
-                                                href="{% url 'project_info' project.id %}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            {% else %}
-                                            <a type="button" data-toggle="tooltip" title=""
-                                                class="btn btn-link btn-primary btn-lg" data-original-title="Ver"
-                                                href="{% url 'project_info' project.id %}">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
+                            <!-- Cuerpo de la tabla contruida por ajax en datatables.js -->
                         </table>
                     </div>
                 </div>
@@ -118,7 +90,5 @@
         </div>
     </div>
 </div>
-
-
 
 {% endblock %}

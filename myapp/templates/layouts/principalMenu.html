@@ -28,6 +28,8 @@
 	<!-- CSS Just for demo purpose, don't include it in your project -->
 	<link rel="stylesheet" href="{% static '/assets/css/demo.css' %}">
 
+	<script src=" {% static '/libs/fullcalendar-6.1.19/dist/index.global.js' %}"></script>
+
 </head>
 
 <body>
@@ -187,65 +189,48 @@
 								<p>Actividades</p>
 							</a>
 						</li>
-						<li class="nav-item">
-							<a href="{% url 'approach_project' %}">
+						<li class="nav-item submenu">
+							<a data-toggle="collapse" href="#stages" class="collapsed" aria-expanded="false">
 								<i class="fas fa-file-alt"></i>
-								<p>Planteamiento del proyecto</p>
+								<p>Guia de Actividades</p>
+								<span class="caret"></span>
 							</a>
+							<div class="collapse" id="stages">
+								<ul class="nav nav-collapse">
+									<li class="nav-item">
+										<a href="{% url 'content_approach_project' %}">
+											<span class="sub-item">Planteamiento del Proyecto</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="{% url 'content_planning_project' %}">
+											<span class="sub-item">Planificación del Proyecto</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="{% url 'content_systemic_review' %}">
+											<span class="sub-item">Revisión Sistémica</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="{% url 'content_validation' %}">
+											<span class="sub-item">Validación</span>
+										</a>
+									</li>
+									<li class="nav-item">
+										<a href="{% url 'content_subtantiation' %}">
+											<span class="sub-item">Sustetación</span>
+										</a>
+									</li>
+								</ul>
+							</div>
 						</li>
 						<li class="nav-item">
-							<a href="#">
-								<i class="fas fa-clipboard-list"></i>
-								<p>Planificacion del proyecto</p>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="#">
-								<i class="fas fa-code"></i>
-								<p>Desarrollo</p>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="#">
-								<i class="fas fa-chart-bar"></i>
-								<p>Seguimiento</p>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="#">
+							<a href="{% url 'calendar' %}">
 								<i class="far fa-calendar-alt"></i>
 								<p>Calendario Reuniones</p>
 							</a>
 						</li>
-						<!-- <li class="nav-item active">
-							<a data-toggle="collapse" href="#tareas" class="collapsed" aria-expanded="false">
-								<i class="fas fa-clipboard-check"></i>
-								<p>Tareas</p>
-								<span class="caret"></span>
-							</a>
-							<div class="collapse" id="tareas">
-								<ul class="nav nav-collapse">
-									<li>
-										<a href="#">
-											<i class="fas fa-file-alt"></i>
-											<span class="sub-item">Tareas Pendientes</span>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<i class="fas fa-file-alt"></i>
-											<span class="sub-item">Tareas Completadas</span>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<i class="fas fa-file-signature"></i>
-											<span class="sub-item">Crear Tareas</span>
-										</a>
-									</li>
-								</ul>
-							</div> 
-						</li>-->
 					</ul>
 				</div>
 			</div>
@@ -312,7 +297,7 @@
 	<script src="{% static '/assets/js/datatables.js' %}"></script>
 
 	<!-- modals -->
-	 <script src="{% static '/assets/js/modals.js' %}"></script>
+	<script src="{% static '/assets/js/modals.js' %}"></script>
 
 	<!-- Bootstrap Notify -->
 	<script src="{% static '/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
@@ -327,7 +312,7 @@
 	<!-- Atlantis JS -->
 	<script src="{% static '/assets/js/atlantis.min.js' %}"></script>
 
-	
+
 
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
 	<!-- <script src="{% static '/assets/js/setting-demo.js' %}"></script>

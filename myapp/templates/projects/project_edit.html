@@ -1,34 +1,9 @@
 {% block content %}
 
-<!-- Modal Editar Proyectos -->
-<div class="modal fade" id="addRowModalEdit" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <span class="fw-mediumbold">
-                        Editar</span>
-                    <span class="fw-light">
-                        Proyecto
-                    </span>
-                </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="modal-body-content-edit">
-                <p class="small">Formulario para agregar nuevos proyectos</p>
-                <!-- Aquí HTMX insertará el formulario -->
-            </div>
-            <div class="modal-footer no-bd">
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Formulario Editar Proyectos -->
 
 {% if project %}
-<form method="POST" id="editProjectForm" action="{% url 'project_edit' project.id %}"
-    hx-target="#modal-body-content-edit" hx-swap="outerHTML">
+<form method="POST" id="editProjectForm" action="" hx-target="#modal-body-project-edit" hx-swap="outerHTML">
     <p class="small">{{error}}</p>
     {% csrf_token %}
     <div class="row">
@@ -51,6 +26,24 @@
                 <label>Tema</label>
                 <input id="tema_investigacion" name="tema_investigacion" type="text" class="form-control"
                     placeholder="Tema de investigación" value="{{project.tema_investigacion}}">
+            </div>
+        </div>
+         <div class="col-sm-12">
+            <p class="small">Datos integrante {{forloop.counter}}</p>
+        </div>
+        <div class="col-sm-12">
+            <div class="table-responsive">
+                <table id="list-members-project" class="display table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nro.</th>
+                            <th>Nombres</th>
+                            <th>Codigo</th>
+                            <th>Correo Institucional</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                </table>
             </div>
         </div>
         {% for integrante in integrantes %}
@@ -99,8 +92,9 @@
     <button type="submit" class="btn btn-warning">Gardar Cambios</button>
     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
     <!-- <button  class="btn btn-success">Completado</button>
-        <button  class="btn btn-danger">Eliminar</button> -->
+                    <button  class="btn btn-danger">Eliminar</button> -->
 </form>
+
 {% endif %}
 
 {% endblock %}

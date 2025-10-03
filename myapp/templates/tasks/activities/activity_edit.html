@@ -1,0 +1,42 @@
+{% block content %}
+
+<!-- Form Modal Edit Activity -->
+{% if activity %}
+<form id="EditActivityForm" action="{% url 'activity_edit' activity.id %}" method="POST">
+    <!-- <p>Formulario para la creacion de las actividades de los proyectos</p> -->
+    {{error}}
+    {% csrf_token %}
+    <input type="hidden" id="id_stage" name="id_stage" value="">
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="title">Titulo</label>
+            <input type="text" name="title" id="title" class="form-control" placeholder="Titulo Actividad"
+                value="{{activity.title}}">
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="description">Descripción</label>
+            <textarea name="description" id="description" class="form-control"
+            style="height: 150px !important;">{{activity.description}}</textarea>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group form-group-default">
+            <label for="stageSelect">Etapa de la Actividad:</label>
+            <select class="form-control" id="stageSelect" name="stageSelect" required>
+                {% for stage in stages %}
+                <option value="{{ stage.id }}" {% if stage.id == activity.etapa_id %}selected{% endif %}>
+                    {{ stage.title }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+        <div class="text-right">
+            <button type="submit" class="btn btn-primary">Editar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+        </div>
+</form>
+{% endif %}
+{% endblock %}

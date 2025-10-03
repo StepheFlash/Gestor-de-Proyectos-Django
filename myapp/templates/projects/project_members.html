@@ -16,7 +16,7 @@
             </div>
             <div class="modal-body">
                 <p class="small">Formulario para agregar integrantes al proyecto</p>
-                <form method="POST" action="{% url 'assing_members_project' %}">
+                <form method="POST" action="{% url 'assing_members_project' %}" id="addProjectMembersForm">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-sm-12">
@@ -36,7 +36,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="col-md-6">
                             <div class="form-group form-group-default">
                                 <label>Cedula</label>
@@ -59,8 +58,10 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success">Agregar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">Agregar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer no-bd">
@@ -69,6 +70,7 @@
     </div>
 </div>
 
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $('#integranteSelect').on('change', function(){
         let integranteId = $(this).val()
@@ -90,8 +92,14 @@
         }else{
             $('#cedula').val('');
             $('#student_code').val('');
-            $('#institutional_mail'.val(''));
+            $('#institutional_mail').val('');
         }
+    });
+
+    $('addModalProjectMembers').on('hidden.bs.modal', function () {
+        $('#cedula').val('');
+        $('#student_code').val('');
+        $('#institutional_mail').val('');
     });
 </script>
 

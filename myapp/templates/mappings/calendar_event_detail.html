@@ -1,0 +1,192 @@
+{% extends 'layouts/principalMenu.html' %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<div class="page-inner">
+    <div class="page-header">
+        <h4 class="page-title">Calendario</h4>
+        <ul class="breadcrumbs">
+            <li class="nav-home">
+                <a href="{% url 'index' %}">
+                    <i class="flaticon-home"></i>
+                </a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'calendar' %}">Calendario</a>
+            </li>
+            <li class="separator">
+                <i class="flaticon-right-arrow"></i>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'calendar_event_detatils' meeting.id %}">Detalle evento</a>
+            </li>
+        </ul>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h2>Nombre Evento: {{meeting.title}}</h2>
+                    </div>
+                    <div class="card-category"><strong>De</strong> {{ meeting.meeting_start }} <strong>A</strong> {{meeting.meeting_end }}</div>
+                    <div class="d-flex align-items-center ml-auto">
+                        <button class="btn btn-primary btn-round ml-auto" data-toggle="modal"
+                            data-target="#addNoteCalendarModal" data-idmeeting="{{meeting.id}}">
+                            <i class="fa fa-plus"></i>
+                            Agregar Nota
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Modal Create Event Calendar -->
+                    {% include "mappings/calendar_add_notes.html" %}
+
+                    <!-- Modal Informacion Event Calendar -->
+                    {% include "mappings/calendar_event_info.html" %}
+
+                    <!-- Modal Edit Event Calendar -->
+                    {% include "mappings/calendar_event_edit.html" %}
+                    
+                    <!-- Modal Delete Event Calendar -->
+                    {% include "mappings/calendar_event_delete.html" %}
+
+                    <h5 class="card-title">Descripcion de la reunión:</h5>
+                    <p class="card-text">{{meeting.agenda}}</p>
+                    <h5 class="card-title">Integrantes del proyecto: {{meeting.project.name}}</h5>
+                    <br>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-head-bg-info table-bordered-bd-info">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Codigo</th>
+                                    <th scope="col">Correo institucional</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for integrante in integrantes %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{integrante.user.first_name}} {{integrante.user.last_name}}
+                                    </td>
+                                    <td>{{integrante.student_code}}</td>
+                                    <td>{{integrante.user.email}}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="" class="btn btn-info" data-toggle="modal" data-target="#infoEventCalendarModal">
+                        <span class="btn-label"><i class="fa fa-info-circle"></i>
+                        </span>Ver notas
+                    </a>
+                    <a href="" class="btn btn-warning" data-toggle="modal" data-target="#editEventCalendarModal">
+                        <span class="btn-label"><i class="fa fa-edit"></i></span>Editar
+                    </a>
+                    <a href="" class="btn btn-danger" data-toggle="modal" data-target="#deleteEventCalendarModal">
+                        <span class="btn-label"><i class="fa fa-trash"></i></span>Elininar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        //Funcion para cerrar el modal despues de agregar notas y muestra un mensaje de exito
+        $('#addModalCalendarNoteForm').on('submit', function (event) {
+            event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+            let formData = $(this).serialize(); // Captura los datos del formulario
+
+            $.ajax({
+                url: '{% url "calendar_create_note" meeting.id %}', // URL de tu vista de Django para crear el evento
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    // Cierra el modal después de una respuesta exitosa
+                    $('#addNoteCalendarModal').modal('hide');
+
+                    swal("¡Éxito!", response.message, "success");
+                },
+                error: function (error) {
+                    swal("Ocurrió un error al agregar el evento:", error);
+                }
+            });
+        });
+
+        //Funcion para cerrar el modal despues de editar el evento y mostar un mensaje de exito
+        $('#editEventCalendarForm').on('submit', function (event) {
+            event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+            let formData = $(this).serialize(); // Captura los datos del formulario
+
+            $.ajax({
+                url: '{% url "calendar_event_edit" meeting.id %}', // URL de tu vista de Django para crear el evento
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    // Cierra el modal después de una respuesta exitosa
+                    $('#editEventCalendarModal').modal('hide');
+
+                    swal({
+                        title:"¡Éxito!",
+                        text: response.message,
+                        icon: "success",
+                        buttons: false
+                    })
+
+                    // Recarga la pagina
+                    setTimeout(function () {
+                        window.location.reload();
+                    }, 2000); // Retraso de 1.5 segundos
+                },
+                error: function (error) {
+                    swal("Ocurrió un error al agregar el evento:", error);
+                }
+            });
+        });
+
+        ////Funcion para cerrar el modal despues de eliminar el evento, y muestra un mensaje de exito
+        $('#deleteEventCalendarForm').on('submit', function (event) {
+            event.preventDefault(); // Evita que el formulario se envíe de forma tradicional
+
+            let formData = $(this).serialize(); // Captura los datos del formulario
+
+            $.ajax({
+                url: '{% url "calendar_event_delete" meeting.id %}', // URL de tu vista de Django para crear el evento
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    swal({
+                        title:"¡Éxito!",
+                        text: response.message,
+                        icon: "success",
+                        buttons: false
+                    })
+                    setTimeout(function () {
+                         window.location.href = "{% url 'calendar' %}";
+                    }, 2000); // Retraso de 2 segundos
+                },
+
+                error: function (error) {
+                    swal("Ocurrió un error al agregar el evento:", error);
+                }
+            });
+        });
+
+
+    });
+</script>
+
+{% endblock content %}

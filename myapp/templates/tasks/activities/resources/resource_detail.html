@@ -1,0 +1,53 @@
+{% block content %}
+
+
+{% if resource %}
+<!-- Tabla del modal -->
+<div class="row">
+    <div class="col-md-12">
+        <table hx-target="modal-body-detail-resource" hx-swap="outerHTML" style="width: 760px;">
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <label>Titulo del Contenido Multimedia</label>
+                                <p>{{resource.title_content}}</p>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <label>Descripcion del documento</label>
+                                <p>{{resource.description}}</p>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-default">
+                                <a href="{{resource.link_content}}" type="button" class="btn btn-default"
+                                    target="_blank">
+                                    <span>
+                                        <i class="fa fa-link"></i>
+                                        Link Documento
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% block content %}
+
+<!-- Modal Nuevo Evento -->
+<div class="modal fade" id="editEventCalendarModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header no-bd">
+                <h4 class="modal-title">
+                    <span class="fw-mediumbold">Editar</span>
+                    <span class="fw-light">Evento</span>
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="editEventCalendarForm" action="{% url 'calendar_event_edit' meeting.id %}">
+                    <p>Formulario para editar el evento</p>
+                    {{error}}
+                    {% csrf_token %}
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="title">Titulo</label>
+                            <input type="text" name="title" id="title" class="form-control" placeholder="Titulo evento"  value="{{meeting.title}}">
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="agenda">Descripción evento</label>
+                            <textarea name="agenda" id="agenda" class="form-control" placeholder="Descripción agenda del evento" style="height: 100px !important;">{{meeting.agenda}}</textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="projectSelect">Proyecto asociado:</label>
+                            <select class="form-control" id="projectSelect" name="projectSelect" >
+                                {% for project in projects %}
+                                <option value="{{project.id}}" {% if project.id == meeting.project_id %}selected{% endif %}>
+                                    {{project.name}}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-left: 0px; margin-right: 0px;">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label for="meeting_start">Fecha de Inicio</label>
+                                <input id="meeting_start" name="meeting_start" type="datetime-local" class="form-control" 
+                                value="{{ meeting.meeting_start | date:'Y-m-d\\TH:i' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-default">
+                                <label for="meeting_end">Fecha de Fin</label>
+                                <input id="meeting_end" name="meeting_end" type="datetime-local" class="form-control" 
+                                value="{{ meeting.meeting_end | date:'Y-m-d\\TH:i' }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="form-group form-group-default">
+                            <label for="meeting_link">Link de la reunion</label>
+                            <input type="text" name="meeting_link" id="meeting_link" class="form-control"
+                                placeholder="Link de la Reunion" value="{{meeting.meeting_link}}">
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button class="btn btn-primary" type="submit">Modificar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer no-bd">
+                <!-- <button type="button" id="addRowButton" class="btn btn-primary">Add</button> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

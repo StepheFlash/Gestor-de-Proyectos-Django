@@ -1,0 +1,23 @@
+{% block content %}
+
+<!-- Formulario del modal para eliminar actividades -->
+{% if activity %}
+<form id="EditActivityForm" action="{% url 'activity_delete' activity.id %}" method="POST">
+    <!-- <p>Formulario para la creacion de las actividades de los proyectos</p> -->
+    {{error}}
+    {% csrf_token %}
+    <input type="hidden" id="id_stage" name="id_stage" value="">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Eliminar Actividad</h5>
+            <p class="card-text">¿Seguro que quieres eliminar la actividad --{{activity.title}}-- de la lista?</p>
+        </div>
+    </div>
+    <div class="text-right">
+        <button class="btn btn-danger">Eliminar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+    </div>
+</form>
+
+{% endif %}
+{% endblock %}
